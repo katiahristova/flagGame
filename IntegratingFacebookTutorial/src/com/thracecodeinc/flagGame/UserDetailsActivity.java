@@ -57,7 +57,8 @@ public class UserDetailsActivity extends Activity {
       requestDialog = new GameRequestDialog(this);
       requestDialog.registerCallback(callbackManager, new FacebookCallback<GameRequestDialog.Result>() {
           public void onSuccess(GameRequestDialog.Result result) {
-              //String id = result.getId();
+              String id = result.getRequestId();
+              Log.d("MyApp", "Request ID " + id);
           }
 
           public void onCancel() {}
@@ -101,6 +102,7 @@ public class UserDetailsActivity extends Activity {
           public void onClick(View v) {
               GameRequestContent content = new GameRequestContent.Builder()
                       .setMessage("Come play this level with me")
+                      .setData("Test String")
                       .build();
               requestDialog.show(content);
           }
@@ -135,6 +137,7 @@ public class UserDetailsActivity extends Activity {
       progressDialog.dismiss();
       updateViewsWithProfileInfo();
     }
+
 
   }
 
