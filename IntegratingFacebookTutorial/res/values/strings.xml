@@ -4,4 +4,6 @@
     <string name="login_intro">Check out your Facebook profile by logging in with the button below!</string>
     <string name="gender">Gender</string>
     <string name="email">Email</string>
+    <string name="login_with_facebook">Login With Facebook</string>
+    <string name="hello_world">Hello world!</string>
 </resources>

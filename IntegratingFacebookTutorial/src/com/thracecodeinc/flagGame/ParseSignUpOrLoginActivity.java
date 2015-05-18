@@ -55,7 +55,7 @@ public class ParseSignUpOrLoginActivity extends Activity {
         ((Button) findViewById(R.id.play)).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Starts an intent for the sign up activity
-                startActivity(new Intent(ParseSignUpOrLoginActivity.this, MainActivity.class));
+                startActivity(new Intent(ParseSignUpOrLoginActivity.this, GameStartPage.class));
             }
         });
     }
