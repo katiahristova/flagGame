@@ -52,7 +52,7 @@ public class GameStartPage extends Activity{
         for (String region : regionNames)
             regionsMap.put(region, true);
 
-
+        Log.d("MyApp", "Regions map in start page: " + regionsMap.toString());
 
 
         playButton = (Button) findViewById(R.id.buttonPlay);

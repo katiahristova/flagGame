@@ -109,10 +109,12 @@ public class OfflineGame extends Activity {
             {
                 Log.d("MyApp", "Getting region " + region);
                 if (regionsMap.get(region))
-                {               String[] paths = assets.list(region);
-
-                    for (String path : paths)
+                {   String[] paths = assets.list(region);
+                    Log.d("MyApp", "Added paths for " + region);
+                    for (String path : paths) {
+                        Log.d("MyApp", "Adding pngs for " + path);
                         fileNameList.add(path.replace(".png", ""));
+                    }
                 }
             }
         }
