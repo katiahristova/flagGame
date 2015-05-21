@@ -40,6 +40,7 @@ public class OfflineGame extends Activity {
     private List<String> fileNameList; // flag file names
     private List<String> quizCountriesList;
     private Map<String, Boolean> regionsMap;
+    public static HashMap<String, String> capitalsMap = new HashMap<String, String>();
     private String correctAnswer;
     private int totalGuesses; // number of guesses made
     private int correctAnswers; // number of correct guesses
@@ -54,6 +55,8 @@ public class OfflineGame extends Activity {
     private TableLayout buttonTableLayout;
     private boolean startedByUser;
 
+    private boolean countriesMode;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -63,6 +66,8 @@ public class OfflineGame extends Activity {
         String actionBarTitle = getString(R.string.offline_mode);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
+
+        countriesMode = false;
 
         guessRows = getIntent().getIntExtra("guessRows", guessRows);
 
@@ -81,6 +86,9 @@ public class OfflineGame extends Activity {
         for (String region : regionNames )
             regionsMap.put(region, true);
         regionsMap.putAll((HashMap<String,Boolean>) getIntent().getSerializableExtra("regionsMap"));
+
+        SharedMethods.getCapitals(getAssets(), capitalsMap);
+
         questionNumberTextView =
                 (TextView) findViewById(R.id.questionNumberTextView);
         flagImageView = (ImageView) findViewById(R.id.flagImageView);
@@ -107,12 +115,9 @@ public class OfflineGame extends Activity {
 
             for (String region : regions)
             {
-                Log.d("MyApp", "Getting region " + region);
                 if (regionsMap.get(region))
                 {   String[] paths = assets.list(region);
-                    Log.d("MyApp", "Added paths for " + region);
                     for (String path : paths) {
-                        Log.d("MyApp", "Adding pngs for " + path);
                         fileNameList.add(path.replace(".png", ""));
                     }
                 }
@@ -131,7 +136,6 @@ public class OfflineGame extends Activity {
         int numberOfFlags = fileNameList.size();
         while (flagCounter <= 10)
         {
-            Log.d("MyApp", "Number of Flags: " + numberOfFlags);
             int randomIndex = random.nextInt(numberOfFlags);
             String fileName = fileNameList.get(randomIndex);
             if (!quizCountriesList.contains(fileName))
@@ -187,7 +191,10 @@ public class OfflineGame extends Activity {
                 Button newGuessButton =
                         (Button) inflater.inflate(R.layout.flags_guess_button, null);
                 String fileName = fileNameList.get((row * 2) + column);
-                newGuessButton.setText(getCountryNameFromStrings(this, fileName));
+                if (countriesMode)
+                    newGuessButton.setText(getCountryNameFromStrings(this, fileName));
+                else
+                    newGuessButton.setText(capitalsMap.get(fileName.substring(fileName.indexOf("-") + 1)));
                 newGuessButton.setOnClickListener(guessButtonListener);
                 currentTableRow.addView(newGuessButton);
             }
@@ -195,7 +202,10 @@ public class OfflineGame extends Activity {
         int row = random.nextInt(guessRows);
         int column = random.nextInt(2);
         TableRow randomTableRow = getTableRow(row);
-        ((Button)randomTableRow.getChildAt(column)).setText(getCountryNameFromStrings(this, correctAnswer));
+        if (countriesMode)
+            ((Button)randomTableRow.getChildAt(column)).setText(getCountryNameFromStrings(this, correctAnswer));
+        else
+            ((Button)randomTableRow.getChildAt(column)).setText(capitalsMap.get(correctAnswer.substring(correctAnswer.indexOf("-") + 1)));
     }
     private TableRow getTableRow(int row)
     {
@@ -210,7 +220,9 @@ public class OfflineGame extends Activity {
         String guess = guessButton.getText().toString();
         String answer = getCountryNameFromStrings(this, correctAnswer);
         ++totalGuesses;
-        if (guess.equals(answer))
+        String country = correctAnswer.substring(correctAnswer.indexOf("-")+1);
+        //Log.d("MyApp", "Guess: " + guess + ", " + answer + ", " + capitalsMap.get(answer));
+        if (guess.equals(answer) || guess.equals(capitalsMap.get(country)))
         {
             ++correctAnswers;
             answerTextView.setText(answer);

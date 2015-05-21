@@ -51,6 +51,7 @@ public class OnlineGame extends FragmentActivity {
     private List<String> fileNameList; // flag file names
     private List<String> quizCountriesList;
     private Map<String, Boolean> regionsMap;
+    public static HashMap<String, String> capitalsMap = new HashMap<String, String>();
     private String answer;
     private String correctAnswer;
     private int totalGuesses; // number of guesses made
@@ -73,6 +74,8 @@ public class OnlineGame extends FragmentActivity {
     private boolean firstRun;
     private boolean correctAnswerGiven = false;
 
+    private boolean countriesMode;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,11 +83,14 @@ public class OnlineGame extends FragmentActivity {
         String actionBarTitle = getString(R.string.guess_country);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
+        countriesMode = false;
         firstRun = true;
         customInfoWindowForMarker = new CustomInfoWindowForMarker();
         fileNameList = new ArrayList<String>();
         quizCountriesList = new ArrayList<String>();
         regionsMap = new HashMap<String, Boolean>();
+
+        SharedMethods.getCapitals(getAssets(), capitalsMap);
 
         guessRows = getIntent().getIntExtra("guessRows", 2);
         random = new Random();
@@ -203,10 +209,6 @@ public class OnlineGame extends FragmentActivity {
             nextImageName = quizCountriesList.remove(0);
         correctAnswer = nextImageName;
 
-        //answerTextView.setText("");
-        /*getActionBar().setTitle(getResources().getString(R.string.question) + " " +
-                (correctAnswers + 1) + " " +
-                getResources().getString(R.string.of) + " 10");*/
         questionNumberTextView.setText(
                 getResources().getString(R.string.question) + " " +
                         (correctAnswers + 1) + " " +
@@ -243,8 +245,11 @@ public class OnlineGame extends FragmentActivity {
                         (Button) inflater.inflate(R.layout.flags_guess_button, null);
                 String fileName = fileNameList.get((row * 2) + column);
                 //Set button text to country name from string resource files
-                newGuessButton.setText(getCountryNameFromStrings(this, fileName));
-                //newGuessButton.setText(getCountryName(fileName));
+                if (countriesMode)
+                    newGuessButton.setText(getCountryNameFromStrings(this, fileName));
+                else
+                    newGuessButton.setText(capitalsMap.get(fileName.substring(fileName.indexOf("-") + 1)));
+
                 newGuessButton.setOnClickListener(guessButtonListener);
                 currentTableRow.addView(newGuessButton);
             }
@@ -252,8 +257,10 @@ public class OnlineGame extends FragmentActivity {
         int row = random.nextInt(guessRows);
         int column = random.nextInt(2);
         TableRow randomTableRow = getTableRow(row);
-        //((Button) randomTableRow.getChildAt(column)).setText(correctAnswer);
-        ((Button) randomTableRow.getChildAt(column)).setText(getCountryNameFromStrings(this, correctAnswer));
+        if (countriesMode)
+            ((Button)randomTableRow.getChildAt(column)).setText(getCountryNameFromStrings(this, correctAnswer));
+        else
+            ((Button)randomTableRow.getChildAt(column)).setText(capitalsMap.get(correctAnswer.substring(correctAnswer.indexOf("-")+1)));
 
     }
 
@@ -269,24 +276,19 @@ public class OnlineGame extends FragmentActivity {
         String guess = guessButton.getText().toString();
         answer = getCountryName(getCountryNameFromStrings(this,correctAnswer));
         ++totalGuesses;
-        if (guess.equals(answer)) {
+        String country = correctAnswer.substring(correctAnswer.indexOf("-")+1);
+        //Log.d("MyApp", "Guess: " + guess + ", " + country + ", " + capitalsMap.get(country));
+        if (guess.equals(answer)  || guess.equals(capitalsMap.get(country))) {
             correctAnswerGiven = true;
             guessButton.setTextColor(getResources().getColor(R.color.correct_answer));
             new GeocoderTask().execute(getCountryName(correctAnswer));
             ++correctAnswers;
-            //answerTextView.setText(answer + "!");
-            //answerTextView.setTextColor(
-            //       getResources().getColor(R.color.correct_answer));
 
             disableButtons();
 
         } else {
-            //flagImageView.startAnimation(shakeAnimation);
             guessButton.setTextColor(getResources().getColor(R.color.translucent_black));
             guessButton.startAnimation(shakeAnimation);
-            //answerTextView.setText(R.string.incorrect_answer);
-            //answerTextView.setTextColor(
-            //        getResources().getColor(R.color.incorrect_answer));
             guessButton.setEnabled(false);
         }
     }

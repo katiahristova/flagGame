@@ -5,12 +5,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
 /**
@@ -170,6 +176,40 @@ public class SharedMethods {
 
 
         return highscore;
+    }
+
+    public static void getCapitals(AssetManager assetManager, HashMap<String, String> capitalsMap)
+    {
+        InputStream is = null;
+        try {
+            is = assetManager.open("countriesData.csv");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+                String[] RowData = line.split(",");
+                String name = RowData[0];
+                String capital = RowData[1];
+                String population = RowData[2];
+                String territory = RowData[3];
+                capitalsMap.put(name, capital);
+                Log.d("Reading Info", "name: " + name + " population: " + population);
+            }
+
+        }
+        catch (IOException ex) {
+            // handle exception
+            Log.d("MyApp", "File not opened in Shared");
+        }
+        finally {
+            try {
+                is.close();
+            }
+            catch (IOException e) {
+                // handle exception
+            }
+        }
+
     }
 
 
