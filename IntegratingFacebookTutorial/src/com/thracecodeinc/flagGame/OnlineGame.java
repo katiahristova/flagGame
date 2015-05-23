@@ -276,7 +276,7 @@ public class OnlineGame extends FragmentActivity {
         String guess = guessButton.getText().toString();
         answer = getCountryName(getCountryNameFromStrings(this,correctAnswer));
         ++totalGuesses;
-        String country = correctAnswer.substring(correctAnswer.indexOf("-")+1);
+        String country = correctAnswer.substring(correctAnswer.indexOf("-") + 1);
         //Log.d("MyApp", "Guess: " + guess + ", " + country + ", " + capitalsMap.get(country));
         if (guess.equals(answer)  || guess.equals(capitalsMap.get(country))) {
             correctAnswerGiven = true;

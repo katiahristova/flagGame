@@ -81,7 +81,8 @@ public class OfflineGame extends Activity {
         handler = new Handler();
         shakeAnimation =
                 AnimationUtils.loadAnimation(this, R.anim.incorrect_shake);
-        shakeAnimation.setRepeatCount(3); String[] regionNames =
+        shakeAnimation.setRepeatCount(3);
+        String[] regionNames =
             getResources().getStringArray(R.array.regionsList);
         for (String region : regionNames )
             regionsMap.put(region, true);

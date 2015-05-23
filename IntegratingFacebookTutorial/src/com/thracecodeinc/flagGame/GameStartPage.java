@@ -25,8 +25,9 @@ import java.util.HashMap;
  */
 public class GameStartPage extends Activity{
     HashMap<String, Boolean> regionsMap;
-    Button playButton;
+    Button playOnlineButton;
     static Button playOfflineButton;
+    Button playHangmanButton;
     Button selectRegionsButton;
     int guessRows = 0;
     int counter = 0;
@@ -55,23 +56,22 @@ public class GameStartPage extends Activity{
         Log.d("MyApp", "Regions map in start page: " + regionsMap.toString());
 
 
-        playButton = (Button) findViewById(R.id.buttonPlay);
+        playOnlineButton = (Button) findViewById(R.id.buttonPlay);
         playOfflineButton = (Button) findViewById(R.id.buttonPlayOffline);
+        playHangmanButton = (Button) findViewById(R.id.buttonPlayHangman);
         selectRegionsButton = (Button) findViewById(R.id.buttonSelectRegions);
 
-        playButton.setOnClickListener(new View.OnClickListener() {
+        playOnlineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Check if data and wifi are on
                 dataOn = dataState();
                 wifiOn = wifiState();
-                boolean online= (dataOn || wifiOn) && networkAllowed;
+                boolean online = (dataOn || wifiOn) && networkAllowed;
                 if (online) {
                     Intent i = new Intent(getApplicationContext(), OnlineGame.class);
                     showSelectNumberOfChoicesPopup(i);
-                }
-                else
-                {
+                } else {
                     if (!SharedMethods.isOnline(getApplicationContext()))
                         SharedMethods.networkModePopup(GameStartPage.this, regionsMap, guessRows);
                 }
@@ -84,6 +84,14 @@ public class GameStartPage extends Activity{
                 Intent i = new Intent(getApplicationContext(), OfflineGame.class);
                 i.putExtra("startedByUser",true);
                 showSelectNumberOfChoicesPopup(i);
+            }
+        });
+
+        playHangmanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), HangmanPlayActivity.class);
+                startActivity(i);
             }
         });
 
