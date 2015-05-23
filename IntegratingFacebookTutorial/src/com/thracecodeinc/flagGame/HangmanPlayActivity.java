@@ -65,6 +65,7 @@ public class HangmanPlayActivity extends Activity {
 		char C = Character.toUpperCase(c);
 		String buttonID = "button" + C;
 	    int resID = getResources().getIdentifier(buttonID, "id", "com.thracecodeinc.flagGame");
+		Log.d("MyApp", "Button ID: " + buttonID);
 	    Button b = (Button) findViewById(resID);
 	    b.setEnabled(false);
 	}
@@ -98,7 +99,8 @@ public class HangmanPlayActivity extends Activity {
 		}
 		HashSet<Character> letterSet = new HashSet<Character>();
 		for(int i=0;i<key.length();++i){
-			letterSet.add(key.charAt(i));
+			if (Character.isLetter(key.charAt(i)))
+				letterSet.add(key.charAt(i));
 		}
 		
 		int numOfLetters = letterSet.size();
@@ -206,27 +208,7 @@ public class HangmanPlayActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void resetGame()
-	{
-		TextView textFill = (TextView)findViewById(R.id.textFill);
-		fileNameList = new ArrayList<String>();
-		quizCountriesList = new ArrayList<String>();
-		regionsMap = new HashMap<String, Boolean>();
-		String[] regionNames =
-				getResources().getStringArray(R.array.regionsList);
-		for (String region : regionNames )
-			regionsMap.put(region, true);
-		//regionsMap.putAll((HashMap<String,Boolean>) getIntent().getSerializableExtra("regionsMap"));
 
-		flagImageView = (ImageView) findViewById(R.id.flagImageView);
-
-		setFlag();
-		selectKey();
-
-		textFill.setText(getCurAnser());
-
-		checkResult();
-	}
 	public void resetGamePopup(){
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -236,7 +218,7 @@ public class HangmanPlayActivity extends Activity {
 		builder.setPositiveButton(getString(R.string.yes),
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						resetGame();
+						recreate();
 					}
 				}
 		);
