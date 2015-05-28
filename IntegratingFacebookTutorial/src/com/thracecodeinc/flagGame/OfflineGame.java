@@ -62,7 +62,7 @@ public class OfflineGame extends Activity {
     private ImageView flagImageView;
     private TableLayout buttonTableLayout;
     private boolean startedByUser;
-
+    private boolean isMultiplayer;
     private boolean countriesMode;
 
     @Override
@@ -86,6 +86,8 @@ public class OfflineGame extends Activity {
 
         guessRows = getIntent().getIntExtra("guessRows",2);
         startedByUser = getIntent().getBooleanExtra("startedByUser", false);
+        isMultiplayer = getIntent().getBooleanExtra("multiplayer", false);
+
         random = new Random();
         handler = new Handler();
         shakeAnimation =
@@ -268,8 +270,21 @@ public class OfflineGame extends Activity {
                             getResources().getString(R.string.correct)));
                 }
 
+                if (isMultiplayer) {
+                    ArrayList<String> regionsArray = new ArrayList<>();
+                    for(Map.Entry<String, Boolean> map : regionsMap.entrySet()){
+                        if (map.getValue()){
+                            regionsArray.add(map.getKey());
+                        }
+                    }
+                    ChallengeBO challengeBO = new ChallengeBO();
+                    challengeBO.setRegions(regionsArray);
+                    challengeBO.setChoices(guessRows);
+                    challengeBO.setChallengeReceiver(ChallengeParseUser.challengedUser);
+                    challengeBO.setChallengerResult(scorePrcntg);
+                    challengeBO.doChallengePlayedQuery();
 
-                this.doChallengePlayedQuery(scorePrcntg);
+                }
 
                 builder.setCancelable(false);
                 builder.setPositiveButton(R.string.reset_quiz,

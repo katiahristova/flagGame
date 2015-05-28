@@ -96,6 +96,7 @@ public class GameStartPage extends FragmentActivity {
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), OfflineGame.class);
                 i.putExtra("startedByUser",true);
+                i.putExtra("multiplayer", false);
                 showSelectNumberOfChoicesPopup(i);
             }
         });

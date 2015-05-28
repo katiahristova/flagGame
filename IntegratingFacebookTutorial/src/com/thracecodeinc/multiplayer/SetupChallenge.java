@@ -53,11 +53,11 @@ public class SetupChallenge extends FragmentActivity {
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), OfflineGame.class);
                 i.putExtra("startedByUser",true);
+                i.putExtra("multiplayer", true);
                 showSelectNumberOfChoicesPopup(i);
             }
         });
-        Toast.makeText(getApplicationContext(),ChallengeParseUser.challengedUser.getUsername(), Toast.LENGTH_LONG).show();
-        //countryChallenge.setText(ChallengeParseUser.challengedUser.getUsername());
+
     }
 
     public void showSelectNumberOfChoicesPopup(final Intent i)

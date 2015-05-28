@@ -28,7 +28,7 @@ public class UserDetailQueryAdapter {
                     public ParseQuery<ParseUser> create() {
 
                         ParseQuery<ParseUser> query = ParseUser.getQuery();
-
+                        query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
 
 
 
