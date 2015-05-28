@@ -6,4 +6,11 @@
     <string name="email">Email</string>
     <string name="login_with_facebook">Login With Facebook</string>
     <string name="hello_world">Hello world!</string>
+    <string name="multiplayer">Multiplayer</string>
+    <string name="parse_app_id">Sksu58OgroGvQdVwnRaeP5KL2DZHmTTVPzytfhET</string>
+    <string name="parse_client_id">ykDWHcPQjsDZIqPHuQKrsVdmru8crvbHn0ff4cHt</string>
+    <string name="challenge_country">Country Challenge</string>
+
 </resources>
+
+

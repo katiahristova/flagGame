@@ -22,10 +22,18 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.parse.ParseACL;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.thracecodeinc.challengeBO.ChallengeBO;
+import com.thracecodeinc.multiplayer.ChallengeParseUser;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +56,7 @@ public class OfflineGame extends Activity {
     private Random random;
     private Handler handler;
     private Animation shakeAnimation;
-
+    private String[] regionNames;
     private TextView answerTextView;
     private TextView questionNumberTextView;
     private ImageView flagImageView;
@@ -71,18 +79,20 @@ public class OfflineGame extends Activity {
 
         guessRows = getIntent().getIntExtra("guessRows", guessRows);
 
+        Toast.makeText(getApplicationContext(),"guessrows "+guessRows,Toast.LENGTH_LONG);
         fileNameList = new ArrayList<String>();
         quizCountriesList = new ArrayList<String>();
         regionsMap = new HashMap<String, Boolean>();
 
         guessRows = getIntent().getIntExtra("guessRows",2);
-        startedByUser = getIntent().getBooleanExtra("startedByUser",false);
+        startedByUser = getIntent().getBooleanExtra("startedByUser", false);
         random = new Random();
         handler = new Handler();
         shakeAnimation =
                 AnimationUtils.loadAnimation(this, R.anim.incorrect_shake);
         shakeAnimation.setRepeatCount(3);
-        String[] regionNames =
+
+        regionNames =
             getResources().getStringArray(R.array.regionsList);
         for (String region : regionNames )
             regionsMap.put(region, true);
@@ -144,6 +154,7 @@ public class OfflineGame extends Activity {
                 quizCountriesList.add(fileName);
                 ++flagCounter;
             }}
+
         loadNextFlag();
     }
     private void loadNextFlag()
@@ -257,6 +268,9 @@ public class OfflineGame extends Activity {
                             getResources().getString(R.string.correct)));
                 }
 
+
+                this.doChallengePlayedQuery(scorePrcntg);
+
                 builder.setCancelable(false);
                 builder.setPositiveButton(R.string.reset_quiz,
                         new DialogInterface.OnClickListener() {
@@ -361,4 +375,26 @@ public class OfflineGame extends Activity {
 
 
 
+    public void doChallengePlayedQuery(float result){
+
+        ArrayList<String> regionsArray = new ArrayList<>();
+        for(Map.Entry<String, Boolean> map : regionsMap.entrySet()){
+            if (map.getValue()){
+                regionsArray.add(map.getKey());
+            }
+        }
+
+        ParseObject challenge = new ParseObject("Challenge");
+        ParseACL acl = new ParseACL(ParseUser.getCurrentUser());
+        acl.setPublicReadAccess(true);
+        challenge.put("Sender", ParseUser.getCurrentUser());
+        challenge.put("Receiver", ChallengeParseUser.challengedUser);
+        challenge.put("Choices", guessRows);
+        challenge.put("SenderResult", result);
+        challenge.addAll("regions", regionsArray);
+        challenge.setACL(acl);
+        challenge.saveEventually();
+
+
+    }
 }

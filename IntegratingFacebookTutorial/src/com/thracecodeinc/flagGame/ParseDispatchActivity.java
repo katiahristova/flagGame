@@ -23,7 +23,6 @@ public class ParseDispatchActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        Parse.initialize(this, getString(R.string.parse_app_id), getString(R.string.parse_client_id));
 
         FacebookSdk.sdkInitialize(this);
         Uri targetUrl =
@@ -60,7 +59,7 @@ public class ParseDispatchActivity extends Activity {
         // Check if there is current user info
         if (ParseUser.getCurrentUser() != null) {
             // Start an intent for the logged in activity
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, GameStartPage.class));
         } else {
             // Start and intent for the logged out activity
             startActivity(new Intent(this, ParseSignUpOrLoginActivity.class));

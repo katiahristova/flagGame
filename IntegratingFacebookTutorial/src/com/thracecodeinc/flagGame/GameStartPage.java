@@ -1,6 +1,5 @@
 package com.thracecodeinc.flagGame;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,27 +7,32 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.parse.ParseUser;
+import com.thracecodeinc.multiplayer.ChallengeParseUser;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by katiahristova on 4/17/15.
  */
-public class GameStartPage extends Activity{
-    HashMap<String, Boolean> regionsMap;
+public class GameStartPage extends FragmentActivity {
+    private HashMap<String, Boolean> regionsMap;
     Button playOnlineButton;
     static Button playOfflineButton;
     Button playHangmanButton;
     Button selectRegionsButton;
+    Button multiplayer;
     int guessRows = 0;
     int counter = 0;
     boolean dataOn;
@@ -47,11 +51,8 @@ public class GameStartPage extends Activity{
 
 
 
-        regionsMap = new HashMap<String, Boolean>();
-        String[] regionNames =
-                getResources().getStringArray(R.array.regionsList);
-        for (String region : regionNames)
-            regionsMap.put(region, true);
+        regionsMap = new HashMap<>();
+
 
         Log.d("MyApp", "Regions map in start page: " + regionsMap.toString());
 
@@ -60,6 +61,18 @@ public class GameStartPage extends Activity{
         playOfflineButton = (Button) findViewById(R.id.buttonPlayOffline);
         playHangmanButton = (Button) findViewById(R.id.buttonPlayHangman);
         selectRegionsButton = (Button) findViewById(R.id.buttonSelectRegions);
+        multiplayer = (Button) findViewById(R.id.buttonMultiplayer);
+
+
+        multiplayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ChallengeParseUser challengeParseUser = new ChallengeParseUser();
+                android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+                challengeParseUser.show(manager, "");
+            }
+        });
 
         playOnlineButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,68 +112,8 @@ public class GameStartPage extends Activity{
         {
             @Override
             public void onClick(View view) {
+                regionsMap = SharedMethods.getRegionsMap(GameStartPage.this);
 
-                final String[] regionNames =
-                        regionsMap.keySet().toArray(new String[regionsMap.size()]);
-
-                final boolean[] regionsEnabled = new boolean[regionsMap.size()];
-                for (int i = 0; i < regionsEnabled.length; ++i)
-                    regionsEnabled[i] = regionsMap.get(regionNames[i]);
-                final AlertDialog.Builder regionsBuilder =
-                        new AlertDialog.Builder(GameStartPage.this);
-                regionsBuilder.setTitle(R.string.regions);
-
-                String[] displayNames = new String[regionNames.length];
-                for (int i = 0; i < regionNames.length; ++i)
-                    displayNames[i] = regionNames[i].replace('_', ' ');
-
-
-
-
-                regionsBuilder.setMultiChoiceItems(
-                        displayNames, regionsEnabled,
-                        new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which,
-                                                boolean isChecked) {
-                            for (int i = 0; i < regionsEnabled.length; ++i) {
-                                if (!regionsEnabled[i])
-                                    counter++;
-                                Log.d("which"," "+counter);
-                            }
-
-                                if (counter < 6) {
-                                    //((AlertDialog) dialog).getListView().setItemChecked(which, false);
-                                    regionsMap.put(
-                                            regionNames[which].toString(), isChecked);
-                                } else {
-                                    ((AlertDialog) dialog).getListView().setItemChecked(which, true);
-                                }
-
-                                counter = 0;
-                            }
-                        }
-                );
-
-                regionsBuilder.setPositiveButton(getString(R.string.ok),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int button) {
-                                //go to the appropriate activity
-                            }
-                        });
-
-                regionsBuilder.setNegativeButton(R.string.cancel,
-
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int button) {
-
-                            }
-                        }
-                );
-                AlertDialog regionsDialog = regionsBuilder.create();
-                regionsDialog.show();
             }
         });
     }

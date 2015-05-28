@@ -23,6 +23,8 @@ import java.util.HashMap;
  * Created by Samurai on 4/19/15.
  */
 public class SharedMethods {
+    private static int counter;
+    private static HashMap<String, Boolean> regionsMap;
     static double highscore = 0.0;
     static AlertDialog resetDialog;
     private static int exitGame;
@@ -32,6 +34,14 @@ public class SharedMethods {
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
+    }
+
+    public static HashMap<String, Boolean> getRegionsMap() {
+        return regionsMap;
+    }
+
+    public static void setRegionsMap(HashMap<String, Boolean> regionsMap) {
+        SharedMethods.regionsMap = regionsMap;
     }
 
     //Used when the home button is pressed
@@ -211,6 +221,83 @@ public class SharedMethods {
         }
 
     }
+
+    public static HashMap<String, Boolean> getRegionsMap(Context context){
+        regionsMap = new HashMap<>();
+
+        String[] regionNms =
+                context.getResources().getStringArray(R.array.regionsList);
+
+        for (String region : regionNms)
+            regionsMap.put(region, true);
+        counter = 0;
+
+
+        final String[] regionNames =
+                regionsMap.keySet().toArray(new String[regionsMap.size()]);
+
+        final boolean[] regionsEnabled = new boolean[regionsMap.size()];
+        for (int i = 0; i < regionsEnabled.length; ++i)
+            regionsEnabled[i] = regionsMap.get(regionNames[i]);
+        final AlertDialog.Builder regionsBuilder =
+                new AlertDialog.Builder(context);
+        regionsBuilder.setTitle(R.string.regions);
+
+        String[] displayNames = new String[regionNames.length];
+        for (int i = 0; i < regionNames.length; ++i)
+            displayNames[i] = regionNames[i].replace('_', ' ');
+
+
+
+
+        regionsBuilder.setMultiChoiceItems(
+                displayNames, regionsEnabled,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which,
+                                        boolean isChecked) {
+                        for (int i = 0; i < regionsEnabled.length; ++i) {
+                            if (!regionsEnabled[i])
+                                counter++;
+                            Log.d("which", " " + counter);
+                        }
+
+                        if (counter < 6) {
+                            //((AlertDialog) dialog).getListView().setItemChecked(which, false);
+                            regionsMap.put(
+                                    regionNames[which].toString(), isChecked);
+                        } else {
+                            ((AlertDialog) dialog).getListView().setItemChecked(which, true);
+                        }
+
+                        counter = 0;
+                    }
+                }
+        );
+
+        regionsBuilder.setPositiveButton(context.getString(R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int button) {
+                        //go to the appropriate activity
+                    }
+                });
+
+        regionsBuilder.setNegativeButton(R.string.cancel,
+
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int button) {
+
+                    }
+                }
+        );
+        AlertDialog regionsDialog = regionsBuilder.create();
+        regionsDialog.show();
+
+        return regionsMap;
+    }
+
 
 
 }
