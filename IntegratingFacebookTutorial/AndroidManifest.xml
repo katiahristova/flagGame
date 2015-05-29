@@ -120,7 +120,7 @@
                 <category android:name="com.thracecodeinc.flagGame" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.parse.ParsePushBroadcastReceiver" android:exported="false">
+        <receiver android:name="com.thracecodeinc.multiplayer.CustomNotificationReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />
                 <action android:name="com.parse.push.intent.DELETE" />

@@ -24,14 +24,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.thracecodeinc.challengeBO.ChallengeBO;
 import com.thracecodeinc.multiplayer.ChallengeParseUser;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,6 +56,7 @@ public class GameStartPage extends FragmentActivity {
     boolean dataOn;
     boolean wifiOn;
     boolean networkAllowed;
+
 
     int RESULT_LOAD_IMG = 1;
     String imgDecodableString = "";

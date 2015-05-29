@@ -1,12 +1,18 @@
 package com.thracecodeinc.challengeBO;
 
+import android.content.Context;
+import android.widget.Toast;
+
+import com.parse.FindCallback;
 import com.parse.ParseACL;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.thracecodeinc.multiplayer.ChallengeParseUser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Samurai on 5/28/15.
@@ -17,8 +23,10 @@ public class ChallengeBO {
     private float challengerResult;
     private float playerChallengedResult;
     private ArrayList<String> regions;
+    private String uniqueId;
 
     public ChallengeBO() {
+        uniqueId = UUID.randomUUID().toString();
     }
 
     public ChallengeBO(ParseUser challengeReceiver, int choices, float challengerResult,
@@ -28,6 +36,7 @@ public class ChallengeBO {
         this.challengerResult = challengerResult;
         this.playerChallengedResult = playerChallengedResult;
         this.regions = regions;
+        uniqueId = UUID.randomUUID().toString();
     }
 
     public ParseUser getChallengeReceiver() {
@@ -67,6 +76,12 @@ public class ChallengeBO {
         return regions;
     }
 
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+
+
     public void setRegions(ArrayList<String> regions) {
         this.regions = regions;
     }
@@ -79,9 +94,19 @@ public class ChallengeBO {
         challenge.put("Receiver", this.getChallengeReceiver());
         challenge.put("Choices", this.getChoices());
         challenge.put("SenderResult", this.getChallengerResult());
+        challenge.put("uniqueID", this.getUniqueId());
         challenge.addAll("regions", this.getRegions());
         challenge.setACL(acl);
         challenge.saveEventually();
         
     }
+
+    public ParseQuery getChallenge(String unqId){
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Challenge");
+        query.whereEqualTo("uniqueID", unqId);
+
+        return query;
+    }
+
 }

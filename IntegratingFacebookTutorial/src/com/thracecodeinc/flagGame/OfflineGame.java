@@ -25,11 +25,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.ParseACL;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.thracecodeinc.challengeBO.ChallengeBO;
 import com.thracecodeinc.multiplayer.ChallengeParseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,6 +70,7 @@ public class OfflineGame extends Activity {
     private boolean startedByUser;
     private boolean isMultiplayer;
     private boolean countriesMode;
+    private boolean isFromChallenge;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -75,11 +81,13 @@ public class OfflineGame extends Activity {
         String actionBarTitle = getString(R.string.offline_mode);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
+//        JSONObject data = null;
+//        try {
+//            data = new JSONObject("{\"alert\": \"The Mets scored!\"}");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
-        ParsePush push = new ParsePush();
-        push.setChannel("ChallengeChanel");
-        push.setMessage("You have been challenged by: "+ ParseUser.getCurrentUser().getUsername());
-        push.sendInBackground();
 
         countriesMode = false;
 
@@ -93,6 +101,7 @@ public class OfflineGame extends Activity {
         guessRows = getIntent().getIntExtra("guessRows",2);
         startedByUser = getIntent().getBooleanExtra("startedByUser", false);
         isMultiplayer = getIntent().getBooleanExtra("multiplayer", false);
+        isFromChallenge = getIntent().getBooleanExtra("fromChallenge", false);
 
         random = new Random();
         handler = new Handler();
@@ -289,6 +298,31 @@ public class OfflineGame extends Activity {
                     challengeBO.setChallengeReceiver(ChallengeParseUser.challengedUser);
                     challengeBO.setChallengerResult(scorePrcntg);
                     challengeBO.doChallengePlayedQuery();
+
+
+                    if (isFromChallenge) {
+                        JSONObject obj = new JSONObject();
+                        try {
+                            obj.put("alert", "Countries Challenge");
+                            obj.put("fromuser", ChallengeParseUser.challengedUser);
+                            obj.put("uniquechallengeid", challengeBO.getUniqueId());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        // Find devices associated with these users
+                        ParseQuery pushQuery = ParseInstallation.getQuery();
+                        pushQuery.whereEqualTo("device_id", ParseUser.getCurrentUser().getObjectId());
+
+                        // Send push notification to query
+                        ParsePush push = new ParsePush();
+                        push.setChannel("ChallengeChanel");
+                        push.setQuery(pushQuery); // Set our Installation query
+                        push.setData(obj);
+                        push.sendInBackground();
+                    }
+
 
                 }
 
