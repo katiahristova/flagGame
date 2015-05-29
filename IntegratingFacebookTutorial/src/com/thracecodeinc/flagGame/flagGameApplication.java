@@ -24,22 +24,7 @@ public class flagGameApplication extends Application {
       Parse.initialize(this, getString(R.string.parse_app_id), getString(R.string.parse_client_id));
       ParseFacebookUtils.initialize(getApplicationContext());
 
-      ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-      installation.put("device_id", ParseUser.getCurrentUser().getObjectId());
-      installation.saveInBackground();
 
-      ParsePush.subscribeInBackground("ChallengeChanel", new SaveCallback() {
-        @Override
-        public void done(ParseException e) {
-          if (e == null) {
-            Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
-          } else {
-            Log.e("com.parse.push", "failed to subscribe for push", e);
-          }
-        }
-      });
-
-      PushService.setDefaultPushCallback(this, OfflineGame.class);
   }
 
 

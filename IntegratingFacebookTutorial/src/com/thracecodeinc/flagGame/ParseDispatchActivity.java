@@ -10,7 +10,12 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.applinks.AppLinkData;
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
+import com.parse.PushService;
+import com.parse.SaveCallback;
 
 import bolts.AppLinks;
 
@@ -58,6 +63,7 @@ public class ParseDispatchActivity extends Activity {
         }
         // Check if there is current user info
         if (ParseUser.getCurrentUser() != null) {
+            signUserToChannel();
             // Start an intent for the logged in activity
             startActivity(new Intent(this, GameStartPage.class));
         } else {
@@ -80,5 +86,24 @@ public class ParseDispatchActivity extends Activity {
 
         // Logs 'app deactivate' App Event.
         //AppEventsLogger.deactivateApp(this);
+    }
+
+    public void signUserToChannel(){
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("device_id", ParseUser.getCurrentUser().getObjectId());
+        installation.saveInBackground();
+
+        ParsePush.subscribeInBackground("ChallengeChanel", new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+                } else {
+                    Log.e("com.parse.push", "failed to subscribe for push", e);
+                }
+            }
+        });
+
+        PushService.setDefaultPushCallback(this, OfflineGame.class);
     }
 }
