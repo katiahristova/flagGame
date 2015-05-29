@@ -300,11 +300,11 @@ public class OfflineGame extends Activity {
                     challengeBO.doChallengePlayedQuery();
 
 
-                    if (isFromChallenge) {
+                    if (!isFromChallenge) {
                         JSONObject obj = new JSONObject();
                         try {
                             obj.put("alert", "Countries Challenge");
-                            obj.put("fromuser", ChallengeParseUser.challengedUser);
+                            obj.put("fromuser", ParseUser.getCurrentUser().getUsername());
                             obj.put("uniquechallengeid", challengeBO.getUniqueId());
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -313,7 +313,7 @@ public class OfflineGame extends Activity {
 
                         // Find devices associated with these users
                         ParseQuery pushQuery = ParseInstallation.getQuery();
-                        pushQuery.whereEqualTo("device_id", ParseUser.getCurrentUser().getObjectId());
+                        pushQuery.whereEqualTo("device_id", challengeBO.getChallengeReceiver());
 
                         // Send push notification to query
                         ParsePush push = new ParsePush();
