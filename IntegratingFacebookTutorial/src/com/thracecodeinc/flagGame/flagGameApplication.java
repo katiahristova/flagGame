@@ -23,7 +23,7 @@ public class flagGameApplication extends Application {
       ParseFacebookUtils.initialize(getApplicationContext());
       ParseInstallation.getCurrentInstallation().saveInBackground();
 
-      ParsePush.subscribeInBackground("ChallengePush", new SaveCallback() {
+      ParsePush.subscribeInBackground("", new SaveCallback() {
         @Override
         public void done(ParseException e) {
           if (e == null) {

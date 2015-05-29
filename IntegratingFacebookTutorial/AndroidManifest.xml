@@ -16,7 +16,7 @@
 
     <permission android:protectionLevel="signature"
         android:name="com.thracecodeinc.flagGame.permission.C2D_MESSAGE" />
-    <uses-permission android:name="com.thracecodeinc.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.thracecodeinc.flagGame.permission.C2D_MESSAGE" />
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but are recommended.
