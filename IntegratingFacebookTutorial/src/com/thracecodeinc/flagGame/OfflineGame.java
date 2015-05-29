@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.parse.ParseACL;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.thracecodeinc.challengeBO.ChallengeBO;
 import com.thracecodeinc.multiplayer.ChallengeParseUser;
@@ -74,6 +75,11 @@ public class OfflineGame extends Activity {
         String actionBarTitle = getString(R.string.offline_mode);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
+
+        ParsePush push = new ParsePush();
+        push.setChannel("ChallengeChanel");
+        push.setMessage("You have been challenged by: "+ ParseUser.getCurrentUser().getUsername());
+        push.sendInBackground();
 
         countriesMode = false;
 
