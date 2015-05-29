@@ -4,9 +4,16 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.util.Log;
@@ -14,11 +21,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
 import com.thracecodeinc.multiplayer.ChallengeParseUser;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +49,10 @@ public class GameStartPage extends FragmentActivity {
     boolean dataOn;
     boolean wifiOn;
     boolean networkAllowed;
+
+    int RESULT_LOAD_IMG = 1;
+    String imgDecodableString = "";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -187,7 +202,24 @@ public class GameStartPage extends FragmentActivity {
         } else {
             bedMenuItem.setTitle(getString(R.string.login));
         }
+
+
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+            String dir = Environment.getExternalStorageDirectory().toString();
+            File imgFile = new  File(dir, "flagGameProfilePic.jpg");
+
+            if(imgFile.exists()) {
+                MenuItem mi = (MenuItem) menu.findItem(R.id.user_pic);
+                Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
+                mi.setIcon(d);
+            }
+
+        return super.onPrepareOptionsMenu(menu);
+
     }
 
     @Override
@@ -201,6 +233,62 @@ public class GameStartPage extends FragmentActivity {
             startActivity(new Intent(GameStartPage.this, ParseDispatchActivity.class));
             return true;
         }
+
+        if (id == R.id.user_pic)
+        {
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+// Start the Intent
+            startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            // When an Image is picked
+            if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK
+                    && null != data) {
+                // Get the Image from data
+
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+                // Get the cursor
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                // Move to first row
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                imgDecodableString = cursor.getString(columnIndex);
+
+                String path = Environment.getExternalStorageDirectory().toString();
+                OutputStream fOut = null;
+                File file = new File(path, "flagGameProfilePic.jpg"); // the File to save to
+                fOut = new FileOutputStream(file);
+
+                Bitmap pictureBitmap = BitmapFactory
+                        .decodeFile(imgDecodableString); // obtaining the Bitmap
+                pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+                fOut.flush();
+                fOut.close(); // do not forget to close the stream
+
+                MediaStore.Images.Media.insertImage(getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
+
+                cursor.close();
+                invalidateOptionsMenu();
+
+
+            } else {
+                Toast.makeText(this, "You haven't picked Image",
+                        Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG)
+                    .show();
+        }
+
     }
 }
