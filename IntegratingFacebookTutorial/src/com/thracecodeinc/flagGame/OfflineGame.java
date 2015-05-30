@@ -313,7 +313,7 @@ public class OfflineGame extends Activity {
 
                         // Find devices associated with these users
                         ParseQuery pushQuery = ParseInstallation.getQuery();
-                        pushQuery.whereEqualTo("device_id", challengeBO.getChallengeReceiver());
+                        pushQuery.whereContains("device_id", ChallengeParseUser.challengedUser.getObjectId());
 
                         // Send push notification to query
                         ParsePush push = new ParsePush();
