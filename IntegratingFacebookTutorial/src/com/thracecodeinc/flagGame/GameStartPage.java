@@ -1,12 +1,15 @@
 package com.thracecodeinc.flagGame;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -57,9 +60,12 @@ public class GameStartPage extends FragmentActivity {
     boolean wifiOn;
     boolean networkAllowed;
 
+    private final int GALLERY_ACTIVITY_CODE=200;
+    private final int RESULT_CROP = 400;
 
     int RESULT_LOAD_IMG = 1;
     String imgDecodableString = "";
+    String picturePath = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -203,12 +209,12 @@ public class GameStartPage extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.start_page_options_menu, menu);
-        MenuItem bedMenuItem = menu.findItem(R.id.action_settings);
+        MenuItem loginMenuItem = menu.findItem(R.id.action_settings);
 
         if (ParseUser.getCurrentUser() != null) {
-            bedMenuItem.setTitle(getString(R.string.logout));
+            loginMenuItem.setTitle(getString(R.string.logout));
         } else {
-            bedMenuItem.setTitle(getString(R.string.login));
+            loginMenuItem.setTitle(getString(R.string.login));
         }
 
 
@@ -217,14 +223,27 @@ public class GameStartPage extends FragmentActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-            String dir = Environment.getExternalStorageDirectory().toString();
-            File imgFile = new  File(dir, "flagGameProfilePic.jpg");
 
-            if(imgFile.exists()) {
-                MenuItem mi = (MenuItem) menu.findItem(R.id.user_pic);
-                Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
+        MenuItem mi = (MenuItem) menu.findItem(R.id.user_pic);
+
+        if (ParseUser.getCurrentUser() == null) {
+            mi.setVisible(false);
+        }
+        else {
+            String dir = Environment.getExternalStorageDirectory().toString();
+            File imgFile = new  File(dir, ParseUser.getCurrentUser().getUsername() + "flagGameProfilePic.jpg");
+            if (imgFile.exists()) {
+
+                Drawable d1 = Drawable.createFromPath(imgFile.getAbsolutePath());
+                Bitmap bitmap = ((BitmapDrawable) d1).getBitmap();
+            // Scale it to 50 x 50
+                Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 150, 150, true));
                 mi.setIcon(d);
             }
+            else {
+                mi.setIcon(R.drawable.button_add_pic);
+            }
+        }
 
         return super.onPrepareOptionsMenu(menu);
 
@@ -244,14 +263,18 @@ public class GameStartPage extends FragmentActivity {
 
         if (id == R.id.user_pic)
         {
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Intent gallery_Intent = new Intent(getApplicationContext(), GalleryUtil.class);
+            startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
+
+            //Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+             //       android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            
 // Start the Intent
-            startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+            //startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
         }
         return super.onOptionsItemSelected(item);
     }
-
+/*
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
@@ -298,5 +321,74 @@ public class GameStartPage extends FragmentActivity {
                     .show();
         }
 
+    } */
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GALLERY_ACTIVITY_CODE) {
+            if(resultCode == Activity.RESULT_OK){
+                picturePath = data.getStringExtra("picturePath");
+                Log.d("MyApp", "Filepath: " + picturePath);
+                //perform Crop on the Image Selected from Gallery
+                performCrop(picturePath);
+            }
+        }
+
+        if (requestCode == RESULT_CROP ) {
+            if(resultCode == Activity.RESULT_OK){
+                Bundle extras = data.getExtras();
+                Bitmap selectedBitmap = extras.getParcelable("data");
+                String path = Environment.getExternalStorageDirectory().toString();
+                OutputStream fOut = null;
+                File file = new File(path, ParseUser.getCurrentUser().getUsername() + "flagGameProfilePic.jpg"); // the File to save to
+                try {
+                    fOut = new FileOutputStream(file);
+                    selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+                    fOut.flush();
+                    fOut.close(); // don't forget to close the stream
+
+                    MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
+                }
+                catch (Exception e)
+                {
+                    Log.d("MyApp", "Exception: " + e.toString());
+                }
+                invalidateOptionsMenu();
+            }
+        }
+    }
+
+    private void performCrop(String picUri) {
+        try {
+            //Start Crop Activity
+
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            // indicate image type and Uri
+            File f = new File(picUri);
+            Uri contentUri = Uri.fromFile(f);
+
+            cropIntent.setDataAndType(contentUri, "image/*");
+            // set crop properties
+            cropIntent.putExtra("crop", "true");
+            // indicate aspect of desired crop
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            // indicate output X and Y
+            cropIntent.putExtra("outputX", 286);
+            cropIntent.putExtra("outputY", 286);
+
+            // retrieve data on return
+            cropIntent.putExtra("return-data", true);
+            // start the activity - handle returning in onActivityResult
+            startActivityForResult(cropIntent, RESULT_CROP);
+        }
+        // respond to users whose devices do not support the crop action
+        catch (ActivityNotFoundException anfe) {
+            // display an error message
+            String errorMessage = "your device doesn't support the crop action!";
+            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 }
