@@ -62,9 +62,6 @@ public class GameStartPage extends FragmentActivity {
 
     private final int GALLERY_ACTIVITY_CODE=200;
     private final int RESULT_CROP = 400;
-
-    int RESULT_LOAD_IMG = 1;
-    String imgDecodableString = "";
     String picturePath = "";
 
     @Override
