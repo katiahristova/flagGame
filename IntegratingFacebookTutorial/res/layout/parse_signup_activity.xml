@@ -90,7 +90,7 @@
     <TextView android:id="@+id/loginTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Already have an account? \n Log In Here."
+        android:text="Already have an account? \n Log in here."
         android:layout_marginTop="@dimen/dimen10dp"
         android:layout_marginBottom="@dimen/dimen10dp"
         android:layout_marginRight="@dimen/dimen20dp"
