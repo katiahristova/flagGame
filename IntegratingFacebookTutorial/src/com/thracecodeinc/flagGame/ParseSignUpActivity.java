@@ -56,6 +56,14 @@ public class ParseSignUpActivity extends Activity {
                 startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
             }
         });
+
+        findViewById(R.id.loginTextView).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent i = new Intent(ParseSignUpActivity.this, ParseLoginActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
         // Set up the submit button click handler
         findViewById(R.id.signup_button).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
