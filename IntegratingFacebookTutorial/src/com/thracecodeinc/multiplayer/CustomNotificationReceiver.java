@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Samurai on 5/29/15.
@@ -69,26 +70,32 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         mBuilder.setAutoCancel(true);
 
 // this is the activity that we will send the user, change this to anything you want
-        ChallengeBO challengeBO = new ChallengeBO();
+
         regionsMap = new HashMap<>();
-        ParseQuery query = challengeBO.getChallenge(uniqueid);
+        String[] regionNms =
+                context.getResources().getStringArray(R.array.regionsList);
+        for (String region : regionNms)
+            regionsMap.put(region, false);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Challenge");
+        query.whereEqualTo("uniqueID", uniqueid);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
                     if (!list.isEmpty()) {
-                        ArrayList<String> testStringArrayList = (ArrayList<String>) list.get(0).get("regions");
+                        ArrayList<String> regionsFromParse = (ArrayList<String>) list.get(0).get("regions");
 
-                        for (String region : testStringArrayList) {
-                            regionsMap.put(region, true);
-
+                        for (String region : regionsFromParse) {
+                                regionsMap.put(region, true);
                         }
+
 
                         resultIntent = new Intent(context, OfflineGame.class);
                         resultIntent.putExtra("guessRows", list.get(0).getInt("Choices"));
                         resultIntent.putExtra("regionsMap", regionsMap);
                         resultIntent.putExtra("startedByUser", true);
-                        resultIntent.putExtra("multiplayer", true);
+                        resultIntent.putExtra("multiplayer", false);
                         resultIntent.putExtra("fromChallenge", true);
 
                         PendingIntent resultPendingIntent = PendingIntent.getActivity(context,

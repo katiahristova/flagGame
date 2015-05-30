@@ -6,9 +6,15 @@ import android.widget.Toast;
 import com.parse.FindCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.thracecodeinc.multiplayer.ChallengeParseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,12 +107,28 @@ public class ChallengeBO {
         
     }
 
-    public ParseQuery getChallenge(String unqId){
+    public void createPushChallenge(){
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("alert", "Countries Challenge");
+            obj.put("fromuser", ParseUser.getCurrentUser().getUsername());
+            obj.put("uniquechallengeid", this.getUniqueId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Challenge");
-        query.whereEqualTo("uniqueID", unqId);
 
-        return query;
+        // Find devices associated with these users
+        ParseQuery pushQuery = ParseInstallation.getQuery();
+        pushQuery.whereContains("device_id", this.getChallengeReceiver().getObjectId());
+
+        // Send push notification to query
+        ParsePush push = new ParsePush();
+        push.setChannel("ChallengeChanel");
+        push.setQuery(pushQuery); // Set our Installation query
+        push.setData(obj);
+        push.sendInBackground();
     }
+
 
 }

@@ -81,13 +81,6 @@ public class OfflineGame extends Activity {
         String actionBarTitle = getString(R.string.offline_mode);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
-//        JSONObject data = null;
-//        try {
-//            data = new JSONObject("{\"alert\": \"The Mets scored!\"}");
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
 
         countriesMode = false;
 
@@ -286,45 +279,9 @@ public class OfflineGame extends Activity {
                 }
 
                 if (isMultiplayer) {
-                    ArrayList<String> regionsArray = new ArrayList<>();
-                    for(Map.Entry<String, Boolean> map : regionsMap.entrySet()){
-                        if (map.getValue()){
-                            regionsArray.add(map.getKey());
-                        }
-                    }
-                    ChallengeBO challengeBO = new ChallengeBO();
-                    challengeBO.setRegions(regionsArray);
-                    challengeBO.setChoices(guessRows);
-                    challengeBO.setChallengeReceiver(ChallengeParseUser.challengedUser);
-                    challengeBO.setChallengerResult(scorePrcntg);
-                    challengeBO.doChallengePlayedQuery();
-
-
-                    if (!isFromChallenge) {
-                        JSONObject obj = new JSONObject();
-                        try {
-                            obj.put("alert", "Countries Challenge");
-                            obj.put("fromuser", ParseUser.getCurrentUser().getUsername());
-                            obj.put("uniquechallengeid", challengeBO.getUniqueId());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-
-                        // Find devices associated with these users
-                        ParseQuery pushQuery = ParseInstallation.getQuery();
-                        pushQuery.whereContains("device_id", ChallengeParseUser.challengedUser.getObjectId());
-
-                        // Send push notification to query
-                        ParsePush push = new ParsePush();
-                        push.setChannel("ChallengeChanel");
-                        push.setQuery(pushQuery); // Set our Installation query
-                        push.setData(obj);
-                        push.sendInBackground();
+                    createChallenge(scorePrcntg);
                     }
 
-
-                }
 
                 builder.setCancelable(false);
                 builder.setPositiveButton(R.string.reset_quiz,
@@ -430,7 +387,7 @@ public class OfflineGame extends Activity {
 
 
 
-    public void doChallengePlayedQuery(float result){
+    public void createChallenge(float result){
 
         ArrayList<String> regionsArray = new ArrayList<>();
         for(Map.Entry<String, Boolean> map : regionsMap.entrySet()){
@@ -438,18 +395,13 @@ public class OfflineGame extends Activity {
                 regionsArray.add(map.getKey());
             }
         }
-
-        ParseObject challenge = new ParseObject("Challenge");
-        ParseACL acl = new ParseACL(ParseUser.getCurrentUser());
-        acl.setPublicReadAccess(true);
-        challenge.put("Sender", ParseUser.getCurrentUser());
-        challenge.put("Receiver", ChallengeParseUser.challengedUser);
-        challenge.put("Choices", guessRows);
-        challenge.put("SenderResult", result);
-        challenge.addAll("regions", regionsArray);
-        challenge.setACL(acl);
-        challenge.saveEventually();
-
+        ChallengeBO challengeBO = new ChallengeBO();
+        challengeBO.setRegions(regionsArray);
+        challengeBO.setChoices(guessRows);
+        challengeBO.setChallengeReceiver(ChallengeParseUser.challengedUser);
+        challengeBO.setChallengerResult(result);
+        challengeBO.doChallengePlayedQuery();
+        challengeBO.createPushChallenge();
 
     }
 }

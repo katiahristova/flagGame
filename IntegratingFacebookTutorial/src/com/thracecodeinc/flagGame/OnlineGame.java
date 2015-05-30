@@ -122,7 +122,10 @@ public class OnlineGame extends FragmentActivity {
                                                   mMap.setInfoWindowAdapter(null);
                                                   loadNextFlag();
                                                   nextButton.setVisibility(View.INVISIBLE);
-                                                  showNextFlagMarker();
+                                                  if (latLng != null)
+                                                  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                                                  latLng, (float) 5.00));
+                                                          showNextFlagMarker();
                                               }
                                           }
                                       }

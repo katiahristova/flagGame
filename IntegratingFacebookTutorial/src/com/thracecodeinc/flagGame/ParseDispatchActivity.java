@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
@@ -104,6 +105,6 @@ public class ParseDispatchActivity extends Activity {
             }
         });
 
-        PushService.setDefaultPushCallback(this, OfflineGame.class);
+        //PushService.setDefaultPushCallback(this, OfflineGame.class);
     }
 }
