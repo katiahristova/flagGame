@@ -33,11 +33,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HangmanPlayActivity extends Activity {
 	private Random randomGenerator = new Random();
 	private List<String> fileNameList; // flag file names
-	private List<String> quizCountriesList;
 	private Map<String, Boolean> regionsMap;
 	String fileName;
 	private ImageView flagImageView;
@@ -45,6 +46,12 @@ public class HangmanPlayActivity extends Activity {
 	private int curMan = 0;
 	private ArrayList<Boolean> curAnswer;
 	private String key;
+	private int moves = 0;
+	TextView movesView, timerView;
+	Timer T;
+	int count = 0;
+
+	boolean isMultiplayer = false;
 	
 	private void inputLetter(char c){
 		boolean isContain = false;
@@ -59,6 +66,8 @@ public class HangmanPlayActivity extends Activity {
 			curMan--;
 		}
 		disableLetter(c);
+		moves++;
+		movesView.setText("Moves: " + moves);
 	}
 	
 	private void disableLetter(char c){
@@ -102,8 +111,9 @@ public class HangmanPlayActivity extends Activity {
 			if (Character.isLetter(key.charAt(i)))
 				letterSet.add(key.charAt(i));
 		}
-		
+
 		int numOfLetters = letterSet.size();
+		numOfBlanks = numOfLetters;
 		int numOfShow = 0;
 		if(numOfLetters > numOfBlanks){
 			curMan = 0;
@@ -118,7 +128,7 @@ public class HangmanPlayActivity extends Activity {
         Log.d("test","curMan"+curMan);
 
         Log.d("test","numOfShow"+numOfShow);
-        
+
 		for(int i=0;i<numOfShow;++i){
 			int itemIndex = randomGenerator.nextInt(letterSet.size());
 			int j = 0;
@@ -131,7 +141,7 @@ public class HangmanPlayActivity extends Activity {
 			    }
 			    ++j;
 			}
-		}		
+		}
 	}
 	
 	private void checkResult(){
@@ -145,6 +155,7 @@ public class HangmanPlayActivity extends Activity {
         TextView textFill = (TextView)findViewById(R.id.textFill);
         
         if(isComplete){
+			T.cancel();
         	for(int i=0;i<26;i++){
         		char c = (char) ('a' + i);
         		disableLetter(c);
@@ -164,10 +175,14 @@ public class HangmanPlayActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.hangman_activity_play);
+		movesView = (TextView) findViewById(R.id.titleTextView);
+		movesView.setText("Moves: " + moves);
+		timerView = (TextView) findViewById(R.id.timerTextView);
+		setTitle("Hangman");
 
 		TextView textFill = (TextView)findViewById(R.id.textFill);
+
 		fileNameList = new ArrayList<String>();
-		quizCountriesList = new ArrayList<String>();
 		regionsMap = new HashMap<String, Boolean>();
 		String[] regionNames =
 				getResources().getStringArray(R.array.regionsList);
@@ -181,6 +196,21 @@ public class HangmanPlayActivity extends Activity {
 		selectKey();
 
     	textFill.setText(getCurAnser());
+
+		T=new Timer();
+		T.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						timerView.setText("Timer: " + (count/60)/10 + (count/60)%10 + ":" +
+								(count%60)/10 + (count%60)%10);
+						count++;
+					}
+				});
+			}
+		}, 1000, 1000);
 
     	checkResult();
 	}
@@ -363,5 +393,13 @@ public class HangmanPlayActivity extends Activity {
 		}
 
 	}
-	
+
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		if (isMultiplayer)
+			finish();
+	}
+
 }

@@ -46,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Samurai on 4/19/15.
@@ -64,7 +66,7 @@ public class OfflineGame extends Activity {
     private Animation shakeAnimation;
     private String[] regionNames;
     private TextView answerTextView;
-    private TextView questionNumberTextView;
+    private TextView questionNumberTextView, timerView;
     private ImageView flagImageView;
     private TableLayout buttonTableLayout;
     private boolean startedByUser;
@@ -72,13 +74,18 @@ public class OfflineGame extends Activity {
     private boolean countriesMode;
     private boolean isFromChallenge;
 
+    Timer T;
+    Runnable myRunnable;
+    int count;
+
     @Override
+
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.flags_offline_game);
 
-        String actionBarTitle = getString(R.string.offline_mode);
+        String actionBarTitle = getString(R.string.guess_country);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
 
@@ -91,10 +98,20 @@ public class OfflineGame extends Activity {
         quizCountriesList = new ArrayList<String>();
         regionsMap = new HashMap<String, Boolean>();
 
-        guessRows = getIntent().getIntExtra("guessRows",1);
+        guessRows = getIntent().getIntExtra("guessRows", 1);
         startedByUser = getIntent().getBooleanExtra("startedByUser", false);
         isMultiplayer = getIntent().getBooleanExtra("multiplayer", false);
         isFromChallenge = getIntent().getBooleanExtra("fromChallenge", false);
+
+        timerView = (TextView) findViewById(R.id.timerTextView);
+
+        /* REMOVE AFTER TESTING */
+        //isMultiplayer = true;
+        /************************/
+
+
+        if (isMultiplayer)
+            timerView.setVisibility(View.VISIBLE);
 
         random = new Random();
         handler = new Handler();
@@ -122,6 +139,7 @@ public class OfflineGame extends Activity {
 
         resetQuiz();
     }
+
     private void resetQuiz()
     {
         if (SharedMethods.isOnline(OfflineGame.this) && !startedByUser)
@@ -197,6 +215,7 @@ public class OfflineGame extends Activity {
 
         Collections.shuffle(fileNameList);
 
+
         int correct = fileNameList.indexOf(correctAnswer);
         fileNameList.add(fileNameList.remove(correct));
 
@@ -228,6 +247,37 @@ public class OfflineGame extends Activity {
             ((Button)randomTableRow.getChildAt(column)).setText(getCountryNameFromStrings(this, correctAnswer));
         else
             ((Button)randomTableRow.getChildAt(column)).setText(capitalsMap.get(correctAnswer.substring(correctAnswer.indexOf("-") + 1)));
+
+        if (isMultiplayer)
+        {   count = 0;
+
+            T=new Timer();
+            myRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    timerView.setText("Timer: " + (count/60)/10 + (count/60)%10 + ":" +
+                            (count%60)/10 + (count%60)%10);
+                    count++;
+                    if (count >= 6 ) {
+                        T.cancel();
+                        timerView.setText("Timer: 00:00");
+                        ++totalGuesses;
+                        ++correctAnswers;
+                        if (correctAnswers < 10)
+                            loadNextFlag();
+                        else
+                            endOfGame();
+                    }
+                }
+            };
+            T.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(myRunnable);
+                }
+            }, 1000, 1000);
+
+        }
     }
     private TableRow getTableRow(int row)
     {
@@ -246,6 +296,10 @@ public class OfflineGame extends Activity {
         //Log.d("MyApp", "Guess: " + guess + ", " + answer + ", " + capitalsMap.get(answer));
         if (guess.equals(answer) || guess.equals(capitalsMap.get(country)))
         {
+            if (isMultiplayer) {
+                T.cancel();
+                timerView.setText("Timer: 00:00");
+            }
             ++correctAnswers;
             answerTextView.setText(answer);
             answerTextView.setTextColor(
@@ -253,46 +307,7 @@ public class OfflineGame extends Activity {
             guessButton.setTextColor(getResources().getColor(R.color.correct_answer));
             disableButtons();
             if (correctAnswers == 10) {
-                double currentHighScore = SharedMethods.readHighScore(OfflineGame.this);
-                float scorePrcntg = 1000 / (float) totalGuesses;
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-                builder.setTitle(R.string.results);
-                builder.setIcon(SharedMethods.emoticon(scorePrcntg));
-
-                //builder.setTitle(R.string.new_score);
-
-                if (currentHighScore < scorePrcntg) {
-
-                    SharedMethods.writeHighScore(OfflineGame.this, scorePrcntg);
-                    builder.setMessage(String.format("%d %s, %.02f%% %s \n %s - %.02f%%",
-                            totalGuesses, getResources().getString(R.string.guesses),
-                            (scorePrcntg),
-                            getResources().getString(R.string.correct),
-                            getResources().getString(R.string.new_score), scorePrcntg));
-                } else{
-                    builder.setMessage(String.format("%d %s, %.02f%% %s",
-                            totalGuesses, getResources().getString(R.string.guesses),
-                            (scorePrcntg),
-                            getResources().getString(R.string.correct)));
-                }
-
-                if (isMultiplayer) {
-                    createChallenge(scorePrcntg);
-                    }
-
-
-                builder.setCancelable(false);
-                builder.setPositiveButton(R.string.reset_quiz,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                resetQuiz();
-                            }
-                        }
-                );
-                AlertDialog resetDialog = builder.create();
-                resetDialog.show();
+                endOfGame();
             }
             else
             {  handler.postDelayed(
@@ -314,6 +329,52 @@ public class OfflineGame extends Activity {
         }
     }
 
+    //Called when a game is finishing
+    private void endOfGame()
+    {
+        double currentHighScore = SharedMethods.readHighScore(OfflineGame.this);
+        float scorePrcntg = 1000 / (float) totalGuesses;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(R.string.results);
+        builder.setIcon(SharedMethods.emoticon(scorePrcntg));
+
+        //builder.setTitle(R.string.new_score);
+
+        if (currentHighScore < scorePrcntg) {
+
+            SharedMethods.writeHighScore(OfflineGame.this, scorePrcntg);
+            builder.setMessage(String.format("%d %s, %.02f%% %s \n %s - %.02f%%",
+                    totalGuesses, getResources().getString(R.string.guesses),
+                    (scorePrcntg),
+                    getResources().getString(R.string.correct),
+                    getResources().getString(R.string.new_score), scorePrcntg));
+        } else{
+            builder.setMessage(String.format("%d %s, %.02f%% %s",
+                    totalGuesses, getResources().getString(R.string.guesses),
+                    (scorePrcntg),
+                    getResources().getString(R.string.correct)));
+        }
+
+        if (isMultiplayer) {
+            createChallenge(scorePrcntg);
+        }
+
+
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.reset_quiz,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        isMultiplayer = false;
+                        timerView.setVisibility(View.INVISIBLE);
+                        resetQuiz();
+                    }
+                }
+        );
+        AlertDialog resetDialog = builder.create();
+        resetDialog.show();
+    }
     private void disableButtons()
     {
         for (int row = 0; row < buttonTableLayout.getChildCount(); ++row)
@@ -404,4 +465,18 @@ public class OfflineGame extends Activity {
         challengeBO.createPushChallenge();
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        if (isMultiplayer)
+            finish();
+    }
+
 }

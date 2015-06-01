@@ -7,17 +7,17 @@
     android:gravity="center_horizontal"
     android:background="@color/background_color">
 
-
-
-    <TextView android:id="@+id/titleTextView"
-        android:layout_width="match_parent"
+    <TextView android:id="@+id/timerTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/guess_country"
+        android:text="Timer: 00:00"
         android:layout_marginBottom="@dimen/dimen10dp"
-        android:textColor="@color/wallet_holo_blue_light"
+        android:textColor="@color/red_cherry"
         android:textSize="@dimen/title_size"
+        android:visibility="invisible"
         android:gravity="center">
     </TextView>
+
     <View
         android:layout_width="fill_parent"
         android:layout_height="@dimen/dimen5dp"
