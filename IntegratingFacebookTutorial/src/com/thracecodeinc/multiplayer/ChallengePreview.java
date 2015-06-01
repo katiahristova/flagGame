@@ -29,6 +29,7 @@ import com.parse.ParseUser;
 import com.thracecodeinc.flagGame.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,17 +42,33 @@ public class ChallengePreview extends ListActivity {
     private String[] userNames;
     private ArrayList<ParseFile> userImageArray;
     private String[] senderresult;
+    private boolean startedByUser;
+    private boolean isMultiplayer;
+    private boolean countriesMode;
+    private boolean isFromChallenge;
+    private int guessRows;
+    private ArrayList<Map<String, Boolean>> regColl;
+    private Map<String, Boolean> regionsMap;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userImageArray = new ArrayList<>();
 
+
         String actionBarTitle = getString(R.string.challenge_screen);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
+
+        guessRows = getIntent().getIntExtra("guessRows", 1);
+        startedByUser = getIntent().getBooleanExtra("startedByUser", false);
+        isMultiplayer = getIntent().getBooleanExtra("multiplayer", false);
+        isFromChallenge = getIntent().getBooleanExtra("fromChallenge", false);
+
 
 
         ParseQuery<ParseObject> query = new ParseQuery("Challenge");
         query.include("Sender");
+        query.orderByDescending("createdAt");
         query.whereEqualTo("Receiver", ParseUser.getCurrentUser());
         //query.orderByDescending("objectId");
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -59,11 +76,26 @@ public class ChallengePreview extends ListActivity {
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
                     if (!list.isEmpty()) {
+                        regColl = new ArrayList<Map<String, Boolean>>();
                         userNames = new String[list.size()];
                         senderresult = new String[list.size()];
 
                         for (int i=0; i<list.size();i++) {
                             try {
+                                regionsMap = new HashMap<>();
+                                String[] regionNms =
+                                        getResources().getStringArray(R.array.regionsList);
+                                for (String region : regionNms)
+                                    regionsMap.put(region, false);
+                                ArrayList<String> regionsFromParse = (ArrayList<String>) list.get(i).get("regions");
+
+                                for (String region : regionsFromParse) {
+                                    regionsMap.put(region, true);
+
+                                }
+
+                                regColl.add(regionsMap);
+
                                 senderresult[i] = list.get(i).getString("senderresult");
                                 ParseObject p = list.get(i).getParseObject("Sender");
 
@@ -81,7 +113,8 @@ public class ChallengePreview extends ListActivity {
                         }
 
 
-                        setListAdapter(new ChArrayAdapter(ChallengePreview.this, userNames, userImageArray, senderresult));
+                        setListAdapter(new ChArrayAdapter(ChallengePreview.this, userNames, userImageArray,
+                                senderresult, guessRows, startedByUser, isMultiplayer, isFromChallenge, regColl));
                     }
                 }
             }
