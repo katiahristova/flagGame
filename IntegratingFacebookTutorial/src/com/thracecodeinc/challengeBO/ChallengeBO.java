@@ -30,6 +30,7 @@ public class ChallengeBO {
     private float playerChallengedResult;
     private ArrayList<String> regions;
     private String uniqueId;
+    private String challengeSender;
 
     public ChallengeBO() {
         uniqueId = UUID.randomUUID().toString();
@@ -86,7 +87,13 @@ public class ChallengeBO {
         return uniqueId;
     }
 
+    public String getChallengeSender() {
+        return challengeSender;
+    }
 
+    public void setChallengeSender(String challengeSender) {
+        this.challengeSender = challengeSender;
+    }
 
     public void setRegions(ArrayList<String> regions) {
         this.regions = regions;

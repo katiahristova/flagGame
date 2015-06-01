@@ -89,6 +89,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
                         resultIntent.putExtra("startedByUser", true);
                         resultIntent.putExtra("multiplayer", false);
                         resultIntent.putExtra("fromChallenge", true);
+                        resultIntent.putExtra("fromuser", fromUser);
 
                         PendingIntent resultPendingIntent = PendingIntent.getActivity(context,
                                 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);

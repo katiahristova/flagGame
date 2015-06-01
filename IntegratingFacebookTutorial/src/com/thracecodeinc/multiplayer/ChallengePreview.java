@@ -42,10 +42,8 @@ public class ChallengePreview extends ListActivity {
     private String[] userNames;
     private ArrayList<ParseFile> userImageArray;
     private String[] senderresult;
-    private boolean startedByUser;
-    private boolean isMultiplayer;
     private boolean countriesMode;
-    private boolean isFromChallenge;
+    private String fromUser;
     private int guessRows;
     private ArrayList<Map<String, Boolean>> regColl;
     private Map<String, Boolean> regionsMap;
@@ -60,10 +58,7 @@ public class ChallengePreview extends ListActivity {
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
         guessRows = getIntent().getIntExtra("guessRows", 1);
-        startedByUser = getIntent().getBooleanExtra("startedByUser", false);
-        isMultiplayer = getIntent().getBooleanExtra("multiplayer", false);
-        isFromChallenge = getIntent().getBooleanExtra("fromChallenge", false);
-
+        fromUser = getIntent().getStringExtra("");
 
 
         ParseQuery<ParseObject> query = new ParseQuery("Challenge");
@@ -114,7 +109,7 @@ public class ChallengePreview extends ListActivity {
 
 
                         setListAdapter(new ChArrayAdapter(ChallengePreview.this, userNames, userImageArray,
-                                senderresult, guessRows, startedByUser, isMultiplayer, isFromChallenge, regColl));
+                                senderresult, guessRows, regColl, fromUser));
                     }
                 }
             }

@@ -28,34 +28,24 @@ import java.util.Map;
  * Created by Samurai on 5/31/15.
  */
 public class ChArrayAdapter extends ArrayAdapter<String> {
+    private String fromUser;
     private final Context context;
     private final String[] values;
     private final ArrayList<ParseFile> parseFileArray;
     private final String[] senderResult;
     private Button acceptBtn, declineBtn;
-    private boolean startedByUser;
-    private boolean isMultiplayer;
-    private boolean countriesMode;
-    private boolean isFromChallenge;
     private int guessRows;
     private ArrayList<Map<String, Boolean>> regionsArray;
-    private Map<String, Boolean> regionsMap;
-    private ArrayList<String> regionsDisplay;
-    private int rowCounter = 0;
     public ChArrayAdapter(Context context, String[] values, ArrayList<ParseFile> userImageMap,
-                          String[] senderresult, int guessRows, boolean startedByUser,
-                          boolean isMultiplayer, boolean isFromChallenge, ArrayList<Map<String, Boolean>> regionsArray) {
+                          String[] senderresult, int guessRows, ArrayList<Map<String, Boolean>> regionsArray, String fromUser) {
         super(context, R.layout.challenge_preview_item, values);
         this.context = context;
         this.values = values;
         this.senderResult = senderresult;
         parseFileArray = userImageMap;
-        this.startedByUser = startedByUser;
         this.guessRows = guessRows;
-        this.isMultiplayer = isMultiplayer;
-        this.isFromChallenge = isFromChallenge;
         this.regionsArray = regionsArray;
-
+        this.fromUser = fromUser;
 
     }
 
@@ -77,14 +67,12 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
 
             }
         });
-//        rowCounter++;
-//        Toast.makeText(context,"row counter: "+rowCounter+" position: "+position,Toast.LENGTH_SHORT).show();
-
 
         chlngRegions.setText(context.getResources().getString(R.string.challenge_regions) + ": "
-                +extractRegions(position));
+                + extractRegions(position));
         usrName.setText(context.getResources().getString(R.string.player) + ": " + values[position]);
-        chlngScore.setText(context.getResources().getString(R.string.score) + ": " + senderResult[position]);
+        chlngScore.setText(context.getResources().getString(R.string.score) + ": " +
+                String.format("%.02f%%",Float.parseFloat(senderResult[position])));
 
         acceptBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +83,8 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
                 resultIntent.putExtra("startedByUser", true);
                 resultIntent.putExtra("multiplayer", false);
                 resultIntent.putExtra("fromChallenge", true);
+                resultIntent.putExtra("fromuser", fromUser);
+                resultIntent.putExtra("challengerResult", senderResult[position]);
                 context.startActivity(resultIntent);
             }
         });

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -73,6 +74,8 @@ public class OfflineGame extends Activity {
     private boolean isMultiplayer;
     private boolean countriesMode;
     private boolean isFromChallenge;
+    private String fromUser;
+    private String challngResultFromParse;
 
     Timer T;
     Runnable myRunnable;
@@ -102,6 +105,8 @@ public class OfflineGame extends Activity {
         startedByUser = getIntent().getBooleanExtra("startedByUser", false);
         isMultiplayer = getIntent().getBooleanExtra("multiplayer", false);
         isFromChallenge = getIntent().getBooleanExtra("fromChallenge", false);
+        fromUser = getIntent().getStringExtra("fromuser");
+        challngResultFromParse = getIntent().getStringExtra("challengerResult");
 
         timerView = (TextView) findViewById(R.id.timerTextView);
 
@@ -110,7 +115,7 @@ public class OfflineGame extends Activity {
         /************************/
 
 
-        if (isMultiplayer)
+        if (isMultiplayer || isFromChallenge)
             timerView.setVisibility(View.VISIBLE);
 
         random = new Random();
@@ -248,7 +253,7 @@ public class OfflineGame extends Activity {
         else
             ((Button)randomTableRow.getChildAt(column)).setText(capitalsMap.get(correctAnswer.substring(correctAnswer.indexOf("-") + 1)));
 
-        if (isMultiplayer)
+        if (isMultiplayer || isFromChallenge)
         {   count = 0;
 
             T=new Timer();
@@ -295,7 +300,7 @@ public class OfflineGame extends Activity {
         //Log.d("MyApp", "Guess: " + guess + ", " + answer + ", " + capitalsMap.get(answer));
         if (guess.equals(answer) || guess.equals(capitalsMap.get(country)))
         {
-            if (isMultiplayer) {
+            if (isMultiplayer || isFromChallenge) {
                 T.cancel();
                 timerView.setText("Timer: 00:00");
             }
@@ -358,21 +363,25 @@ public class OfflineGame extends Activity {
 
         if (isMultiplayer) {
             createChallenge(scorePrcntg);
+        } else if (isFromChallenge){
+            challengeCompleted(scorePrcntg);
+        } else {
+            builder.setCancelable(false);
+            builder.setPositiveButton(R.string.reset_quiz,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            isMultiplayer = false;
+                            timerView.setVisibility(View.INVISIBLE);
+                            resetQuiz();
+                        }
+                    }
+            );
+            AlertDialog resetDialog = builder.create();
+            resetDialog.show();
         }
 
 
-        builder.setCancelable(false);
-        builder.setPositiveButton(R.string.reset_quiz,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        isMultiplayer = false;
-                        timerView.setVisibility(View.INVISIBLE);
-                        resetQuiz();
-                    }
-                }
-        );
-        AlertDialog resetDialog = builder.create();
-        resetDialog.show();
+
     }
     private void disableButtons()
     {
@@ -463,7 +472,67 @@ public class OfflineGame extends Activity {
         challengeBO.doChallengePlayedQuery();
         challengeBO.createPushChallenge();
 
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(getResources().getString(R.string.challenge_sent)+" "+
+                challengeBO.getChallengeReceiver().getUsername()+" "+
+                (getResources().getString(R.string.was_sent)));
+        builder.setMessage(String.format("%d %s, %.02f%% %s",
+                totalGuesses, getResources().getString(R.string.guesses),
+                (result),
+                getResources().getString(R.string.correct)));
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        isMultiplayer = false;
+                        timerView.setVisibility(View.INVISIBLE);
+                        Intent i = new  Intent(OfflineGame.this, GameStartPage.class);
+                        startActivity(i);
+                    }
+                }
+        );
+        AlertDialog resetDialog = builder.create();
+        resetDialog.show();
+
     }
+
+    public void challengeCompleted(float result){
+
+        ChallengeBO challengeBO = new ChallengeBO();
+        challengeBO.setChallengeSender(fromUser);
+        challengeBO.setChallengerResult(challngResultFromParse);
+
+
+
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (result > Float.parseFloat(challngResultFromParse))
+            builder.setTitle("You Won");
+        else
+            builder.setTitle("You Lost");
+
+        builder.setMessage(String.format("%d %s, %.02f%% %s",
+                totalGuesses, getResources().getString(R.string.guesses),
+                (result),
+                getResources().getString(R.string.correct)) + "\nChallenger's score "+challngResultFromParse);
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        isMultiplayer = false;
+                        timerView.setVisibility(View.INVISIBLE);
+                        Intent i = new  Intent(OfflineGame.this, GameStartPage.class);
+                        startActivity(i);
+                    }
+                }
+        );
+        AlertDialog resetDialog = builder.create();
+        resetDialog.show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();

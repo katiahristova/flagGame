@@ -16,6 +16,9 @@
     <string name="accept_challenge">Accept</string>
     <string name="decline_challenge">Decline</string>
     <string name="challenge_regions">Regions</string>
+    <string name="challenge_sent">Challenge to</string>
+    <string name="was_sent">was sent!</string>
+    <string name="your_score">your score: </string>
 </resources>
 
 
