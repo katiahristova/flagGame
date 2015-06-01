@@ -1,6 +1,7 @@
 package com.thracecodeinc.multiplayer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseImageView;
+import com.thracecodeinc.flagGame.GameStartPage;
 import com.thracecodeinc.flagGame.R;
 
 import java.util.ArrayList;
@@ -63,6 +65,8 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context,"Accepted", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(context, GameStartPage.class);
+                context.startActivity(i);
             }
         });
 

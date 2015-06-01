@@ -52,6 +52,7 @@ public class ChallengePreview extends ListActivity {
 
         ParseQuery<ParseObject> query = new ParseQuery("Challenge");
         query.include("Sender");
+        query.whereEqualTo("Receiver", ParseUser.getCurrentUser());
         //query.orderByDescending("objectId");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override

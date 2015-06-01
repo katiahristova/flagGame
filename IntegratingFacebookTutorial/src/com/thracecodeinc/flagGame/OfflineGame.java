@@ -91,7 +91,7 @@ public class OfflineGame extends Activity {
         quizCountriesList = new ArrayList<String>();
         regionsMap = new HashMap<String, Boolean>();
 
-        guessRows = getIntent().getIntExtra("guessRows",2);
+        guessRows = getIntent().getIntExtra("guessRows",1);
         startedByUser = getIntent().getBooleanExtra("startedByUser", false);
         isMultiplayer = getIntent().getBooleanExtra("multiplayer", false);
         isFromChallenge = getIntent().getBooleanExtra("fromChallenge", false);
