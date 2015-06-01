@@ -255,8 +255,7 @@ public class OfflineGame extends Activity {
             myRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    timerView.setText("Timer: " + (count/60)/10 + (count/60)%10 + ":" +
-                            (count%60)/10 + (count%60)%10);
+                    timerView.setText("Timer: 00:0" + (6-count));
                     count++;
                     if (count >= 6 ) {
                         T.cancel();
