@@ -34,6 +34,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.thracecodeinc.challengeBO.ChallengeBO;
 import com.thracecodeinc.multiplayer.ChallengeParseUser;
+import com.thracecodeinc.multiplayer.ChallengePreview;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,6 +55,7 @@ public class GameStartPage extends FragmentActivity {
     Button playHangmanButton;
     Button selectRegionsButton;
     Button multiplayer;
+    Button seeChallenge;
     int guessRows = 0;
     int counter = 0;
     boolean dataOn;
@@ -88,7 +90,15 @@ public class GameStartPage extends FragmentActivity {
         playHangmanButton = (Button) findViewById(R.id.buttonPlayHangman);
         selectRegionsButton = (Button) findViewById(R.id.buttonSelectRegions);
         multiplayer = (Button) findViewById(R.id.buttonMultiplayer);
+        seeChallenge = (Button) findViewById(R.id.see_challenges);
 
+        seeChallenge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), ChallengePreview.class);
+                startActivity(i);
+            }
+        });
 
         multiplayer.setOnClickListener(new View.OnClickListener() {
             @Override

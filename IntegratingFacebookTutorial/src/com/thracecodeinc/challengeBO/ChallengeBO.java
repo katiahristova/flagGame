@@ -26,7 +26,7 @@ import java.util.UUID;
 public class ChallengeBO {
     private ParseUser challengeReceiver;
     private int choices;
-    private float challengerResult;
+    private String challengerResult;
     private float playerChallengedResult;
     private ArrayList<String> regions;
     private String uniqueId;
@@ -35,7 +35,7 @@ public class ChallengeBO {
         uniqueId = UUID.randomUUID().toString();
     }
 
-    public ChallengeBO(ParseUser challengeReceiver, int choices, float challengerResult,
+    public ChallengeBO(ParseUser challengeReceiver, int choices, String challengerResult,
                        float playerChallengedResult, ArrayList<String> regions) {
         this.challengeReceiver = challengeReceiver;
         this.choices = choices;
@@ -61,11 +61,11 @@ public class ChallengeBO {
         this.choices = choices;
     }
 
-    public float getChallengerResult() {
+    public String getChallengerResult() {
         return challengerResult;
     }
 
-    public void setChallengerResult(float challengerResult) {
+    public void setChallengerResult(String challengerResult) {
         this.challengerResult = challengerResult;
     }
 
@@ -99,7 +99,7 @@ public class ChallengeBO {
         challenge.put("Sender", ParseUser.getCurrentUser());
         challenge.put("Receiver", this.getChallengeReceiver());
         challenge.put("Choices", this.getChoices());
-        challenge.put("SenderResult", this.getChallengerResult());
+        challenge.put("senderresult", this.getChallengerResult());
         challenge.put("uniqueID", this.getUniqueId());
         challenge.addAll("regions", this.getRegions());
         challenge.setACL(acl);

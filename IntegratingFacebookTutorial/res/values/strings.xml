@@ -10,7 +10,11 @@
     <string name="parse_app_id">Sksu58OgroGvQdVwnRaeP5KL2DZHmTTVPzytfhET</string>
     <string name="parse_client_id">ykDWHcPQjsDZIqPHuQKrsVdmru8crvbHn0ff4cHt</string>
     <string name="challenge_country">Country Challenge</string>
-
+    <string name="challenge_screen">Players challenged you</string>
+    <string name="player">player</string>
+    <string name="score">score</string>
+    <string name="accept_challenge">Accept</string>
+    <string name="decline_challenge">Decline</string>
 </resources>
 
 

@@ -388,7 +388,7 @@ public class OfflineGame extends Activity {
 
 
     public void createChallenge(float result){
-
+        String strValueResult = String.valueOf(result);
         ArrayList<String> regionsArray = new ArrayList<>();
         for(Map.Entry<String, Boolean> map : regionsMap.entrySet()){
             if (map.getValue()){
@@ -399,7 +399,7 @@ public class OfflineGame extends Activity {
         challengeBO.setRegions(regionsArray);
         challengeBO.setChoices(guessRows);
         challengeBO.setChallengeReceiver(ChallengeParseUser.challengedUser);
-        challengeBO.setChallengerResult(result);
+        challengeBO.setChallengerResult(strValueResult);
         challengeBO.doChallengePlayedQuery();
         challengeBO.createPushChallenge();
 

@@ -5,18 +5,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
 import com.facebook.applinks.AppLinkData;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
-import com.parse.PushService;
 import com.parse.SaveCallback;
+import com.thracecodeinc.multiplayer.ChallengePreview;
 
 import bolts.AppLinks;
 

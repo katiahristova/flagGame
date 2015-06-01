@@ -8,25 +8,17 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
-
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.thracecodeinc.challengeBO.ChallengeBO;
-import com.thracecodeinc.flagGame.MainActivity;
 import com.thracecodeinc.flagGame.OfflineGame;
-import com.thracecodeinc.flagGame.OnlineGame;
 import com.thracecodeinc.flagGame.R;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Samurai on 5/29/15.
@@ -91,7 +83,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
                         }
 
 
-                        resultIntent = new Intent(context, OfflineGame.class);
+                        resultIntent = new Intent(context, ChallengePreview.class);
                         resultIntent.putExtra("guessRows", list.get(0).getInt("Choices"));
                         resultIntent.putExtra("regionsMap", regionsMap);
                         resultIntent.putExtra("startedByUser", true);
