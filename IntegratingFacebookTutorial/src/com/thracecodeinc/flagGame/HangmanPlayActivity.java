@@ -6,13 +6,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,12 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -323,12 +316,12 @@ public class HangmanPlayActivity extends Activity {
 	}
 	
 	public void goHome(View view) {   
-	       Intent intent = new Intent(this, GameStartPage.class);
+	       Intent intent = new Intent(this, StartPageSinglePlayer.class);
 	       startActivity(intent);
 	}
 	
 	public void nextOne(View view) {   
-	       Intent intent = new Intent(this, GameStartPage.class);
+	       Intent intent = new Intent(this, StartPageSinglePlayer.class);
 	       startActivity(intent);
 	}
 

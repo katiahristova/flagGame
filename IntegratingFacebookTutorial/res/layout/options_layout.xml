@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/background_color"
+    android:layout_height="match_parent">
+
+    <RadioGroup
+        android:id="@+id/radioCountryCapitalOption"
+        android:layout_marginLeft="@dimen/dimen20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen20dp"
+        android:layout_marginBottom="@dimen/dimen20dp"
+        android:layout_marginStart="@dimen/dimen20dp"
+        android:layout_marginRight="@dimen/dimen20dp">
+        <RadioButton
+            android:id="@+id/radioCountryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/country"
+            android:checked="true" />
+        <RadioButton
+            android:id="@+id/radioCapitalCity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/capital" />
+    </RadioGroup>
+
+
+    <RadioGroup
+        android:id="@+id/numberOfQuestions"
+        android:layout_marginLeft="@dimen/dimen20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen20dp"
+        android:layout_marginBottom="@dimen/dimen20dp"
+        android:layout_marginStart="@dimen/dimen20dp"
+        android:layout_marginRight="@dimen/dimen20dp">
+        <RadioButton
+            android:id="@+id/number5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5 Questions"
+            android:checked="true" />
+        <RadioButton
+            android:id="@+id/number10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 Questions" />
+        <RadioButton
+            android:id="@+id/number15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15 Questions" />
+    </RadioGroup>
+
+</LinearLayout>

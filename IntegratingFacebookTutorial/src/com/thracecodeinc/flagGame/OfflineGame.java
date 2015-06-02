@@ -65,7 +65,7 @@ public class OfflineGame extends Activity {
     private TableLayout buttonTableLayout;
     private boolean startedByUser;
     private boolean isMultiplayer;
-    private boolean countriesMode;
+    private boolean countryMode;
     private boolean isFromChallenge;
     private String fromUser;
     private String challngResultFromParse;
@@ -84,8 +84,7 @@ public class OfflineGame extends Activity {
         String actionBarTitle = getString(R.string.guess_country);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
-
-        countriesMode = false;
+        countryMode = getIntent().getBooleanExtra("countryMode", false);
 
         guessRows = getIntent().getIntExtra("guessRows", guessRows);
 
@@ -234,7 +233,7 @@ public class OfflineGame extends Activity {
                 Button newGuessButton =
                         (Button) inflater.inflate(R.layout.flags_guess_button, null);
                 String fileName = fileNameList.get((row * 2) + column);
-                if (countriesMode)
+                if (countryMode)
                     newGuessButton.setText(getCountryNameFromStrings(this, fileName));
                 else
                     newGuessButton.setText(capitalsMap.get(fileName.substring(fileName.indexOf("-") + 1)));
@@ -245,7 +244,7 @@ public class OfflineGame extends Activity {
         int row = random.nextInt(guessRows);
         int column = random.nextInt(2);
         TableRow randomTableRow = getTableRow(row);
-        if (countriesMode)
+        if (countryMode)
             ((Button)randomTableRow.getChildAt(column)).setText(getCountryNameFromStrings(this, correctAnswer));
         else
             ((Button)randomTableRow.getChildAt(column)).setText(capitalsMap.get(correctAnswer.substring(correctAnswer.indexOf("-") + 1)));
@@ -489,7 +488,7 @@ public class OfflineGame extends Activity {
                     public void onClick(DialogInterface dialog, int id) {
                         isMultiplayer = false;
                         timerView.setVisibility(View.INVISIBLE);
-                        Intent i = new  Intent(OfflineGame.this, GameStartPage.class);
+                        Intent i = new  Intent(OfflineGame.this, StartPageSinglePlayer.class);
                         startActivity(i);
                     }
                 }
@@ -525,7 +524,7 @@ public class OfflineGame extends Activity {
                     public void onClick(DialogInterface dialog, int id) {
                         isMultiplayer = false;
                         timerView.setVisibility(View.INVISIBLE);
-                        Intent i = new Intent(OfflineGame.this, GameStartPage.class);
+                        Intent i = new Intent(OfflineGame.this, StartPageSinglePlayer.class);
                         startActivity(i);
                     }
                 }

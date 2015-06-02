@@ -13,6 +13,22 @@
         android:layout_marginTop="@dimen/dimen20dp"
         android:src="@drawable/globe_of_flags"/>
 
+    <Button android:id="@+id/buttonOptions"
+        android:layout_width="match_parent"
+        android:background="@drawable/button_state"
+        android:layout_marginLeft="@dimen/dimen20dp"
+        android:layout_marginRight="@dimen/dimen20dp"
+        android:layout_marginTop="@dimen/dimen20dp"
+        android:padding="@dimen/dimen5dp"
+        android:layout_height="wrap_content"
+        android:text="@string/options"
+        android:textColor="@color/white"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+    </Button>
+
+
     <Button android:id="@+id/buttonPlay"
         android:layout_width="match_parent"
         android:background="@drawable/button_state"
@@ -66,34 +82,6 @@
         android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:text="@string/regions"
-        android:textColor="@color/white"
-        android:orientation="horizontal">
-    </Button>
-
-    <Button android:id="@+id/buttonMultiplayer"
-        android:layout_width="match_parent"
-        android:background="@drawable/button_state"
-        android:layout_marginTop="@dimen/dimen10dp"
-        android:layout_marginLeft="@dimen/dimen20dp"
-        android:layout_marginRight="@dimen/dimen20dp"
-        android:padding="@dimen/dimen5dp"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content"
-        android:text="@string/multiplayer"
-        android:textColor="@color/white"
-        android:orientation="horizontal">
-    </Button>
-
-    <Button android:id="@+id/see_challenges"
-        android:layout_width="match_parent"
-        android:background="@drawable/button_state"
-        android:layout_marginTop="@dimen/dimen10dp"
-        android:layout_marginLeft="@dimen/dimen20dp"
-        android:layout_marginRight="@dimen/dimen20dp"
-        android:padding="@dimen/dimen5dp"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content"
-        android:text="@string/challenge_screen"
         android:textColor="@color/white"
         android:orientation="horizontal">
     </Button>

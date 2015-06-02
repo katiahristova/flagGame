@@ -60,7 +60,7 @@ public class SharedMethods {
         builder.setPositiveButton(context.getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                         Intent i = new Intent(context, GameStartPage.class);
+                         Intent i = new Intent(context, ParseDispatchActivity.class);
                          context.startActivity(i);
                     }
                 }
@@ -99,7 +99,7 @@ public class SharedMethods {
             exitGame = 2;
         }
 
-        else if (context instanceof GameStartPage){
+        else if (context instanceof StartPageSinglePlayer){
             title = context.getResources().getString(R.string.internet_off);
             message = context.getResources().getString(R.string.play_offline);
             i = new Intent(context, OfflineGame.class);
@@ -118,7 +118,7 @@ public class SharedMethods {
                         if (exitGame!=3)
                             context.startActivity(i);
                         else
-                            GameStartPage.playOfflineButton.performClick();
+                            StartPageSinglePlayer.playOfflineButton.performClick();
                     }
                 }
         );

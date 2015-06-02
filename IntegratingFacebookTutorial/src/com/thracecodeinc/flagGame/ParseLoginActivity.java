@@ -96,7 +96,7 @@ public class ParseLoginActivity extends Activity {
                     Toast.makeText(ParseLoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 } else {
                     // Start an intent for the dispatch activity
-                    Intent intent = new Intent(ParseLoginActivity.this, ParseDispatchActivity.class);
+                    Intent intent = new Intent(ParseLoginActivity.this, StartPageMultiplayer.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
