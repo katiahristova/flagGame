@@ -25,22 +25,12 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.ParseACL;
-import com.parse.ParseInstallation;
-import com.parse.ParseObject;
-import com.parse.ParsePush;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.thracecodeinc.challengeBO.ChallengeBO;
 import com.thracecodeinc.multiplayer.ChallengeParseUser;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -59,9 +49,12 @@ public class OfflineGame extends Activity {
     private Map<String, Boolean> regionsMap;
     public static HashMap<String, String> capitalsMap = new HashMap<String, String>();
     private String correctAnswer;
-    private int totalGuesses; // number of guesses made
-    private int correctAnswers; // number of correct guesses
-    private int guessRows;
+    private int totalGuesses; // total number of guesses made
+    private int questionsPassed; // number of questions passed (guessed correct or timer ended)
+    private int correctGuesses; //number of correct guesses
+    private int incorrectGuessesForQuestion; //number of incorrect guesses for a particular question
+
+    private int guessRows, numberOfQuestions;
     private Random random;
     private Handler handler;
     private Animation shakeAnimation;
@@ -102,6 +95,7 @@ public class OfflineGame extends Activity {
         regionsMap = new HashMap<String, Boolean>();
 
         guessRows = getIntent().getIntExtra("guessRows", 1);
+        numberOfQuestions = getIntent().getIntExtra("numberOfQuestions", 10);
         startedByUser = getIntent().getBooleanExtra("startedByUser", false);
         isMultiplayer = getIntent().getBooleanExtra("multiplayer", false);
         isFromChallenge = getIntent().getBooleanExtra("fromChallenge", false);
@@ -140,7 +134,7 @@ public class OfflineGame extends Activity {
         answerTextView = (TextView) findViewById(R.id.answerTextView);
         questionNumberTextView.setText(
                 getResources().getString(R.string.question) + " 1 " +
-                        getResources().getString(R.string.of) + " 10");
+                        getResources().getString(R.string.of) + " " + numberOfQuestions);
 
         resetQuiz();
     }
@@ -172,13 +166,14 @@ public class OfflineGame extends Activity {
             //Log.e(TAG, "Error loading image file names", e);
         }
 
-        correctAnswers = 0;
+        questionsPassed = 0;
         totalGuesses = 0;
+        correctGuesses = 0;
         quizCountriesList.clear();
 
         int flagCounter = 1;
         int numberOfFlags = fileNameList.size();
-        while (flagCounter <= 10)
+        while (flagCounter <= numberOfQuestions)
         {
             int randomIndex = random.nextInt(numberOfFlags);
             String fileName = fileNameList.get(randomIndex);
@@ -192,14 +187,16 @@ public class OfflineGame extends Activity {
     }
     private void loadNextFlag()
     {
+        incorrectGuessesForQuestion = 0;
+
         String nextImageName = quizCountriesList.remove(0);
         correctAnswer = nextImageName;
 
         answerTextView.setText("");
         questionNumberTextView.setText(
                 getResources().getString(R.string.question) + " " +
-                        (correctAnswers + 1) + " " +
-                        getResources().getString(R.string.of) + " 10");
+                        (questionsPassed + 1) + " " +
+                        getResources().getString(R.string.of) + " " + numberOfQuestions);
         String region =
                 nextImageName.substring(0, nextImageName.indexOf('-'));
         AssetManager assets = getAssets(); // get app's AssetManager
@@ -260,14 +257,15 @@ public class OfflineGame extends Activity {
             myRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    timerView.setText("Timer: 00:0" + (6-count));
+                    timerView.setText("Timer: 0"+ (5-count/100)+ ":" + (100-count%100));
                     count++;
-                    if (count >= 6 ) {
+                    if (count == 600 ) {
                         T.cancel();
                         timerView.setText("Timer: 00:00");
-                        ++totalGuesses;
-                        ++correctAnswers;
-                        if (correctAnswers < 10)
+                        //++totalGuesses;
+                        ++questionsPassed;
+                        totalGuesses += (guessRows - incorrectGuessesForQuestion);
+                        if (questionsPassed < numberOfQuestions)
                             loadNextFlag();
                         else
                             endOfGame();
@@ -279,7 +277,7 @@ public class OfflineGame extends Activity {
                 public void run() {
                     runOnUiThread(myRunnable);
                 }
-            }, 1000, 1000);
+            }, 10, 10);
 
         }
     }
@@ -304,13 +302,14 @@ public class OfflineGame extends Activity {
                 T.cancel();
                 timerView.setText("Timer: 00:00");
             }
-            ++correctAnswers;
+            ++questionsPassed;
+            ++correctGuesses;
             answerTextView.setText(answer);
             answerTextView.setTextColor(
                     getResources().getColor(R.color.correct_answer));
             guessButton.setTextColor(getResources().getColor(R.color.correct_answer));
             disableButtons();
-            if (correctAnswers == 10) {
+            if (questionsPassed == numberOfQuestions) {
                 endOfGame();
             }
             else
@@ -324,7 +323,9 @@ public class OfflineGame extends Activity {
             }
         }
         else
-        {  flagImageView.startAnimation(shakeAnimation);
+        {
+            incorrectGuessesForQuestion++;
+            flagImageView.startAnimation(shakeAnimation);
             answerTextView.setText(R.string.incorrect_answer);
             answerTextView.setTextColor(
                     getResources().getColor(R.color.incorrect_answer));
@@ -337,7 +338,7 @@ public class OfflineGame extends Activity {
     private void endOfGame()
     {
         double currentHighScore = SharedMethods.readHighScore(OfflineGame.this);
-        float scorePrcntg = 1000 / (float) totalGuesses;
+        float scorePrcntg = correctGuesses*100 / (float) totalGuesses;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -517,14 +518,14 @@ public class OfflineGame extends Activity {
         builder.setMessage(String.format("%d %s, %.02f%% %s",
                 totalGuesses, getResources().getString(R.string.guesses),
                 (result),
-                getResources().getString(R.string.correct)) + "\nChallenger's score "+challngResultFromParse);
+                getResources().getString(R.string.correct)) + "\nChallenger's score " + challngResultFromParse);
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         isMultiplayer = false;
                         timerView.setVisibility(View.INVISIBLE);
-                        Intent i = new  Intent(OfflineGame.this, GameStartPage.class);
+                        Intent i = new Intent(OfflineGame.this, GameStartPage.class);
                         startActivity(i);
                     }
                 }
