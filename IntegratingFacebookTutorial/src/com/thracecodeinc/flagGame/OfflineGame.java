@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -84,7 +85,10 @@ public class OfflineGame extends Activity {
         String actionBarTitle = getString(R.string.guess_country);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
-        countryMode = getIntent().getBooleanExtra("countryMode", false);
+        SharedPreferences prefs = OfflineGame.this.getSharedPreferences(
+                "com.thracecodeinc.falgGame", Context.MODE_PRIVATE);
+        countryMode = prefs.getBoolean("countryMode", true);
+        numberOfQuestions = prefs.getInt("numberOfQuestions", 10);
 
         guessRows = getIntent().getIntExtra("guessRows", guessRows);
 
@@ -94,7 +98,6 @@ public class OfflineGame extends Activity {
         regionsMap = new HashMap<String, Boolean>();
 
         guessRows = getIntent().getIntExtra("guessRows", 1);
-        numberOfQuestions = getIntent().getIntExtra("numberOfQuestions", 10);
         startedByUser = getIntent().getBooleanExtra("startedByUser", false);
         isMultiplayer = getIntent().getBooleanExtra("multiplayer", false);
         isFromChallenge = getIntent().getBooleanExtra("fromChallenge", false);
@@ -266,8 +269,6 @@ public class OfflineGame extends Activity {
                         totalGuesses += (guessRows - incorrectGuessesForQuestion);
                         if (questionsPassed < numberOfQuestions)
                             loadNextFlag();
-                        else
-                            endOfGame();
                     }
                 }
             };
@@ -488,7 +489,7 @@ public class OfflineGame extends Activity {
                     public void onClick(DialogInterface dialog, int id) {
                         isMultiplayer = false;
                         timerView.setVisibility(View.INVISIBLE);
-                        Intent i = new  Intent(OfflineGame.this, StartPageSinglePlayer.class);
+                        Intent i = new  Intent(OfflineGame.this, StartPageMultiOrSingleplayer.class);
                         startActivity(i);
                     }
                 }
@@ -527,7 +528,7 @@ public class OfflineGame extends Activity {
                     public void onClick(DialogInterface dialog, int id) {
                         isMultiplayer = false;
                         timerView.setVisibility(View.INVISIBLE);
-                        Intent i = new Intent(OfflineGame.this, StartPageSinglePlayer.class);
+                        Intent i = new Intent(OfflineGame.this, StartPageMultiOrSingleplayer.class);
                         startActivity(i);
                         finish();
                     }
@@ -535,6 +536,12 @@ public class OfflineGame extends Activity {
         );
         AlertDialog resetDialog = builder.create();
         resetDialog.show();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        SharedMethods.quitGamePopup(this);
     }
 
     @Override

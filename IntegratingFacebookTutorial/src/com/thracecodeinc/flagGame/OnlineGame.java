@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -541,4 +542,10 @@ public class OnlineGame extends FragmentActivity {
         resetDialog.show();
     }
 
+    @Override
+    public void onBackPressed() {
+        SharedMethods.quitGamePopup(this);
     }
+
+
+}

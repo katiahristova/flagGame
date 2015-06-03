@@ -23,7 +23,6 @@ import bolts.AppLinks;
  */
 
 public class ParseDispatchActivity extends Activity {
-    Button multiplayerButton, singleplayerButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -63,34 +62,14 @@ public class ParseDispatchActivity extends Activity {
         }
 
         setContentView(R.layout.single_or_multiplayer_activity);
-
-        multiplayerButton = (Button) findViewById(R.id.multiplayer_button);
-        singleplayerButton = (Button) findViewById(R.id.singleplayer_button);
-
-        singleplayerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(ParseDispatchActivity.this, StartPageSinglePlayer.class);
-                startActivity(i);
-
-            }
-        });
-
-        multiplayerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 // Check if there is current user info
                 if (ParseUser.getCurrentUser() != null) {
-
                     // Start an intent for the logged in activity
-                    startActivity(new Intent(ParseDispatchActivity.this, StartPageMultiplayer.class));
+                    startActivity(new Intent(ParseDispatchActivity.this, StartPageMultiOrSingleplayer.class));
                 } else {
                     // Start and intent for the logged out activity
                     startActivity(new Intent(ParseDispatchActivity.this, ParseSignUpOrLoginActivity.class));
                 }
-            }
-        });
-
     }
 
     @Override

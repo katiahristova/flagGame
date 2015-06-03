@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -24,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
@@ -51,6 +53,7 @@ public class StartPageSinglePlayer extends FragmentActivity {
     boolean networkAllowed;
 
     boolean countryMode = true;
+    int numberOfQuestions = 10;
 
     private final int GALLERY_ACTIVITY_CODE=200;
     private final int RESULT_CROP = 400;
@@ -104,7 +107,6 @@ public class StartPageSinglePlayer extends FragmentActivity {
                 Intent i = new Intent(getApplicationContext(), OfflineGame.class);
                 i.putExtra("startedByUser",true);
                 i.putExtra("multiplayer", false);
-                i.putExtra("countryMode",countryMode);
                 showSelectNumberOfChoicesPopup(i);
             }
         });
@@ -129,28 +131,7 @@ public class StartPageSinglePlayer extends FragmentActivity {
         optionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutInflater inflater = getLayoutInflater();
-                View dialoglayout = inflater.inflate(R.layout.options_layout, null);
-                final AlertDialog.Builder builder = new AlertDialog.Builder(StartPageSinglePlayer.this);
-                builder.setTitle(getString(R.string.options));
-                final RadioButton country = (RadioButton) findViewById(R.id.radioCountryName);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface di, int i) {
-
-                    /*    if (!country.isChecked())
-                            countryMode = false; */
-                        di.dismiss();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface di, int i) {
-                        di.dismiss();
-                    }
-                });
-                builder.setView(dialoglayout);
-                builder.show();
+                SharedMethods.optionsPopup(StartPageSinglePlayer.this);
             }
         });
     }

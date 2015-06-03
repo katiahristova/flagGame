@@ -118,9 +118,9 @@ public class HangmanPlayActivity extends Activity {
 		}
 
 
-        Log.d("test","curMan"+curMan);
+        Log.d("test", "curMan" + curMan);
 
-        Log.d("test","numOfShow"+numOfShow);
+        Log.d("test", "numOfShow" + numOfShow);
 
 		for(int i=0;i<numOfShow;++i){
 			int itemIndex = randomGenerator.nextInt(letterSet.size());
@@ -314,23 +314,11 @@ public class HangmanPlayActivity extends Activity {
 		
     	checkResult();
 	}
-	
-	public void goHome(View view) {   
-	       Intent intent = new Intent(this, StartPageSinglePlayer.class);
-	       startActivity(intent);
-	}
-	
-	public void nextOne(View view) {   
-	       Intent intent = new Intent(this, StartPageSinglePlayer.class);
-	       startActivity(intent);
-	}
+
 
 	@Override
 	public void onBackPressed() {
-		Intent intent = new Intent(Intent.ACTION_MAIN);
-		intent.addCategory(Intent.CATEGORY_HOME);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(intent);
+			SharedMethods.quitGamePopup(this);
 	}
 
 
@@ -394,5 +382,7 @@ public class HangmanPlayActivity extends Activity {
 		if (isMultiplayer)
 			finish();
 	}
+
+
 
 }

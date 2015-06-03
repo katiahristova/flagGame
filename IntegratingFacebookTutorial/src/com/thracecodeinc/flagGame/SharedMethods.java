@@ -11,6 +11,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -76,6 +80,77 @@ public class SharedMethods {
         resetDialog = builder.create();
         resetDialog.show();
 
+    }
+
+    public static void optionsPopup(final Context c)
+    {
+        LayoutInflater li = LayoutInflater.from(c);
+        //LayoutInflater inflater = getLayoutInflater();
+        View dialoglayout = li.inflate(R.layout.options_layout, null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setTitle(c.getString(R.string.options));
+        builder.setView(dialoglayout);
+        final RadioButton country = (RadioButton) dialoglayout.findViewById(R.id.radioCountryName);
+        final RadioButton capital = (RadioButton) dialoglayout.findViewById(R.id.radioCapitalCity);
+        final RadioGroup numberOfQuestionsGroup = (RadioGroup) dialoglayout.findViewById(R.id.numberOfQuestions);
+        SharedPreferences prefs = c.getSharedPreferences(
+                "com.thracecodeinc.falgGame", Context.MODE_PRIVATE);
+        boolean countryModeOld= prefs.getBoolean("countryMode", true);
+        int numberOfQuestionsOld = prefs.getInt("numberOfQuestions", 10);
+
+        if (!countryModeOld) {
+            country.setChecked(false);
+            capital.setChecked(true);
+        }
+
+        switch (numberOfQuestionsOld)
+        {
+            case 5:
+                numberOfQuestionsGroup.check(R.id.number5);
+                break;
+            case 10:
+                numberOfQuestionsGroup.check(R.id.number10);
+                break;
+            case 15:
+                numberOfQuestionsGroup.check(R.id.number15);
+                break;
+        }
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface di, int i) {
+               boolean countryMode = true;
+                int numberOfQuestions = 10;
+                if (!country.isChecked())
+                    countryMode = false;
+                int id = numberOfQuestionsGroup.getCheckedRadioButtonId();
+                switch (id)
+                {
+                    case R.id.number5:
+                        numberOfQuestions = 5;
+                        break;
+                    case R.id.number10:
+                        numberOfQuestions = 10;
+                        break;
+                    case R.id.number15:
+                        numberOfQuestions = 15;
+                        break;
+                }
+                SharedPreferences prefs = c.getSharedPreferences(
+                        "com.thracecodeinc.falgGame", Context.MODE_PRIVATE);
+                prefs.edit().putInt("numberOfQuestions", numberOfQuestions).apply();
+                prefs.edit().putBoolean("countryMode", countryMode).apply();
+
+
+                di.dismiss();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface di, int i) {
+                di.dismiss();
+            }
+        });
+        builder.show();
     }
 
     public static void networkModePopup(final Context context, HashMap<String,Boolean> regionsMap, int guessRows){
