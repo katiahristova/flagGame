@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -121,6 +122,9 @@ public class ParseSignUpActivity extends Activity {
                             // Show the error message
                             Toast.makeText(ParseSignUpActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                         } else {
+                            if (selectedBitmap==null)
+                                selectedBitmap = BitmapFactory.decodeResource(getResources(),
+                                        R.drawable.kitten);
                             //If a profile picture was set, save that locally
                             if (selectedBitmap != null) {
                                 SharedMethods.saveNewPicture(ParseSignUpActivity.this, selectedBitmap);
