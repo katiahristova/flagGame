@@ -248,6 +248,7 @@ public class StartPageSinglePlayer extends FragmentActivity {
 
         if (id == R.id.user_pic)
         {
+            //SharedMethods.updateProfilePopup(StartPageSinglePlayer.this, this, GALLERY_ACTIVITY_CODE);
             Intent gallery_Intent = new Intent(getApplicationContext(), GalleryUtil.class);
             startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
 

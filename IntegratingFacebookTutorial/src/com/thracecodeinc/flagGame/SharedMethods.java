@@ -2,6 +2,7 @@ package com.thracecodeinc.flagGame;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -93,6 +95,35 @@ public class SharedMethods {
         resetDialog = builder.create();
         resetDialog.show();
 
+    }
+
+    public static void updateProfilePopup(final Context c, final Activity a, final int GALLERY_ACTIVITY_CODE)
+    {
+        LayoutInflater li = LayoutInflater.from(c);
+        //LayoutInflater inflater = getLayoutInflater();
+        View dialoglayout = li.inflate(R.layout.profile_update_popup, null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setView(dialoglayout);
+        ImageButton pic = (ImageButton) dialoglayout.findViewById(R.id.set_picture_button);
+        pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gallery_Intent = new Intent(c.getApplicationContext(), GalleryUtil.class);
+                a.startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
+            }
+        });
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface di, int i) {
+                di.dismiss();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface di, int i) {
+                di.dismiss();
+            }
+        });
+        builder.show();
     }
 
     public static void optionsPopup(final Context c)
