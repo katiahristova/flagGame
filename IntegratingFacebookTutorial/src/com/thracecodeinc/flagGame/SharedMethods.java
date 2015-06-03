@@ -1,14 +1,21 @@
 package com.thracecodeinc.flagGame;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,11 +23,17 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.parse.ParseUser;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 /**
@@ -72,7 +85,7 @@ public class SharedMethods {
         builder.setNegativeButton(context.getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                            resetDialog.dismiss();
+                        resetDialog.dismiss();
                     }
                 }
         );
@@ -118,13 +131,12 @@ public class SharedMethods {
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface di, int i) {
-               boolean countryMode = true;
+                boolean countryMode = true;
                 int numberOfQuestions = 10;
                 if (!country.isChecked())
                     countryMode = false;
                 int id = numberOfQuestionsGroup.getCheckedRadioButtonId();
-                switch (id)
-                {
+                switch (id) {
                     case R.id.number5:
                         numberOfQuestions = 5;
                         break;
@@ -200,7 +212,7 @@ public class SharedMethods {
         builder.setNegativeButton(context.getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if (exitGame==1) {
+                        if (exitGame == 1) {
                             Intent intent = new Intent(Intent.ACTION_MAIN);
                             intent.addCategory(Intent.CATEGORY_HOME);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -373,6 +385,81 @@ public class SharedMethods {
         return regionsMap;
     }
 
+    public static void updatePhoto(Activity a, String picturePath, int requestCode, int resultCode, int GALLERY_ACTIVITY_CODE, int RESULT_CROP, Intent data) {
+        if (requestCode == GALLERY_ACTIVITY_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                picturePath = data.getStringExtra("picturePath");
+                Log.d("MyApp", "Filepath: " + picturePath);
+                //perform Crop on the Image Selected from Gallery
+                SharedMethods.performCrop(picturePath, a, RESULT_CROP);
+            }
+        }
+
+        if (requestCode == RESULT_CROP) {
+            if (resultCode == Activity.RESULT_OK) {
+                Bundle extras = data.getExtras();
+                Bitmap selectedBitmap = extras.getParcelable("data");
+                saveNewPicture(a, selectedBitmap);
+            }
+        }
+    }
+
+
+    //Saves new profile picture
+    public static void saveNewPicture(Activity a, Bitmap selectedBitmap)
+    {
+        String path = Environment.getExternalStorageDirectory().toString();
+        OutputStream fOut = null;
+        if (ParseUser.getCurrentUser()!=null) {
+            File file = new File(path, ParseUser.getCurrentUser().getUsername() + "flagGameProfilePic.jpg"); // the File to save to
+            try {
+                fOut = new FileOutputStream(file);
+                selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+                fOut.flush();
+                fOut.close(); // don't forget to close the stream
+
+                MediaStore.Images.Media.insertImage(a.getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
+            } catch (Exception e) {
+                Log.d("MyApp", "Exception: " + e.toString());
+            }
+            a.invalidateOptionsMenu();
+        }
+    }
+
+
+    //Crops selected image
+    public static void performCrop(String picUri, Activity a, int RESULT_CROP) {
+        try {
+            //Start Crop Activity
+
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            // indicate image type and Uri
+            File f = new File(picUri);
+            Uri contentUri = Uri.fromFile(f);
+
+            cropIntent.setDataAndType(contentUri, "image/*");
+            // set crop properties
+            cropIntent.putExtra("crop", "true");
+            // indicate aspect of desired crop
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            // indicate output X and Y
+            cropIntent.putExtra("outputX", 100);
+            cropIntent.putExtra("outputY", 100);
+
+            // retrieve data on return
+            cropIntent.putExtra("return-data", true);
+            // start the activity - handle returning in onActivityResult
+            a.startActivityForResult(cropIntent, RESULT_CROP);
+        }
+        // respond to users whose devices do not support the crop action
+        catch (ActivityNotFoundException anfe) {
+            // display an error message
+            String errorMessage = "your device doesn't support the crop action!";
+            Toast toast = Toast.makeText(a, errorMessage, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
 
 
 }

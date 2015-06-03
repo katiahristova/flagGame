@@ -150,15 +150,7 @@ public class StartPageMultiplayer extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.start_page_options_menu, menu);
-        MenuItem loginMenuItem = menu.findItem(R.id.action_settings);
-
-        if (ParseUser.getCurrentUser() != null) {
-            loginMenuItem.setTitle(getString(R.string.logout));
-        } else {
-            loginMenuItem.setTitle(getString(R.string.login));
-        }
-
+        getMenuInflater().inflate(R.menu.start_page_multiplayer_menu, menu);
 
         return true;
     }
@@ -197,11 +189,6 @@ public class StartPageMultiplayer extends FragmentActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            ParseUser.getCurrentUser().logOut();
-            startActivity(new Intent(StartPageMultiplayer.this, ParseDispatchActivity.class));
-            return true;
-        }
 
         if (id == R.id.user_pic)
         {
@@ -214,70 +201,7 @@ public class StartPageMultiplayer extends FragmentActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GALLERY_ACTIVITY_CODE) {
-            if(resultCode == Activity.RESULT_OK){
-                picturePath = data.getStringExtra("picturePath");
-                Log.d("MyApp", "Filepath: " + picturePath);
-                //perform Crop on the Image Selected from Gallery
-                performCrop(picturePath);
-            }
-        }
-
-        if (requestCode == RESULT_CROP ) {
-            if(resultCode == Activity.RESULT_OK){
-                Bundle extras = data.getExtras();
-                Bitmap selectedBitmap = extras.getParcelable("data");
-                String path = Environment.getExternalStorageDirectory().toString();
-                OutputStream fOut = null;
-                File file = new File(path, ParseUser.getCurrentUser().getUsername() + "flagGameProfilePic.jpg"); // the File to save to
-                try {
-                    fOut = new FileOutputStream(file);
-                    selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
-                    fOut.flush();
-                    fOut.close(); // don't forget to close the stream
-
-                    MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
-                }
-                catch (Exception e)
-                {
-                    Log.d("MyApp", "Exception: " + e.toString());
-                }
-                invalidateOptionsMenu();
-            }
-        }
-    }
-
-    private void performCrop(String picUri) {
-        try {
-            //Start Crop Activity
-
-            Intent cropIntent = new Intent("com.android.camera.action.CROP");
-            // indicate image type and Uri
-            File f = new File(picUri);
-            Uri contentUri = Uri.fromFile(f);
-
-            cropIntent.setDataAndType(contentUri, "image/*");
-            // set crop properties
-            cropIntent.putExtra("crop", "true");
-            // indicate aspect of desired crop
-            cropIntent.putExtra("aspectX", 1);
-            cropIntent.putExtra("aspectY", 1);
-            // indicate output X and Y
-            cropIntent.putExtra("outputX", 286);
-            cropIntent.putExtra("outputY", 286);
-
-            // retrieve data on return
-            cropIntent.putExtra("return-data", true);
-            // start the activity - handle returning in onActivityResult
-            startActivityForResult(cropIntent, RESULT_CROP);
-        }
-        // respond to users whose devices do not support the crop action
-        catch (ActivityNotFoundException anfe) {
-            // display an error message
-            String errorMessage = "your device doesn't support the crop action!";
-            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
-            toast.show();
-        }
+        SharedMethods.updatePhoto(this, picturePath, requestCode, resultCode, GALLERY_ACTIVITY_CODE, RESULT_CROP, data);
     }
 
     public void signUserToChannel(){
@@ -297,5 +221,12 @@ public class StartPageMultiplayer extends FragmentActivity {
         });
 
         //PushService.setDefaultPushCallback(this, OfflineGame.class);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(this, ParseDispatchActivity.class);
+        startActivity(i);
+        finish();
     }
 }

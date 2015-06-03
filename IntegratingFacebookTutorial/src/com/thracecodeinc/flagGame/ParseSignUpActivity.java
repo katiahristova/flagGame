@@ -34,13 +34,13 @@ public class ParseSignUpActivity extends Activity {
     private EditText passwordAgainView;
     private ImageButton setPictureButton;
 
-    private final int GALLERY_ACTIVITY_CODE=200;
+    private final int GALLERY_ACTIVITY_CODE = 200;
     private final int RESULT_CROP = 400;
     String picturePath = "";
     Bitmap selectedBitmap = null;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.parse_signup_activity);
 
@@ -121,9 +121,9 @@ public class ParseSignUpActivity extends Activity {
                             // Show the error message
                             Toast.makeText(ParseSignUpActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                         } else {
-
                             //If a profile picture was set, save that locally
-                            if (selectedBitmap!=null) {
+                            if (selectedBitmap != null) {
+                                SharedMethods.saveNewPicture(ParseSignUpActivity.this, selectedBitmap);
                                 String path = Environment.getExternalStorageDirectory().toString();
                                 OutputStream fOut = null;
                                 File file = new File(path, ParseUser.getCurrentUser().getUsername() + "flagGameProfilePic.jpg"); // the File to save to
@@ -169,54 +169,25 @@ public class ParseSignUpActivity extends Activity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        SharedMethods.updatePhoto(this, picturePath, requestCode, resultCode, GALLERY_ACTIVITY_CODE, RESULT_CROP, data);
+
         if (requestCode == GALLERY_ACTIVITY_CODE) {
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
                 picturePath = data.getStringExtra("picturePath");
                 Log.d("MyApp", "Filepath: " + picturePath);
                 //perform Crop on the Image Selected from Gallery
-                performCrop(picturePath);
+                SharedMethods.performCrop(picturePath, this, RESULT_CROP);
             }
         }
 
-        if (requestCode == RESULT_CROP ) {
-            if(resultCode == Activity.RESULT_OK){
+        if (requestCode == RESULT_CROP) {
+            if (resultCode == Activity.RESULT_OK) {
                 Bundle extras = data.getExtras();
                 selectedBitmap = extras.getParcelable("data");
 
-             setPictureButton.setImageBitmap(selectedBitmap);
+                if (selectedBitmap != null)
+                    setPictureButton.setImageBitmap(selectedBitmap);
             }
-        }
-    }
-
-    private void performCrop(String picUri) {
-        try {
-            //Start Crop Activity
-            Intent cropIntent = new Intent("com.android.camera.action.CROP");
-            // indicate image type and Uri
-            File f = new File(picUri);
-            Uri contentUri = Uri.fromFile(f);
-
-            cropIntent.setDataAndType(contentUri, "image/*");
-            // set crop properties
-            cropIntent.putExtra("crop", "true");
-            // indicate aspect of desired crop
-            cropIntent.putExtra("aspectX", 1);
-            cropIntent.putExtra("aspectY", 1);
-            // indicate output X and Y
-            cropIntent.putExtra("outputX", 286);
-            cropIntent.putExtra("outputY", 286);
-
-            // retrieve data on return
-            cropIntent.putExtra("return-data", true);
-            // start the activity - handle returning in onActivityResult
-            startActivityForResult(cropIntent, RESULT_CROP);
-        }
-        // respond to users whose devices do not support the crop action
-        catch (ActivityNotFoundException anfe) {
-            // display an error message
-            String errorMessage = "your device doesn't support the crop action!";
-            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
-            toast.show();
         }
     }
 }
