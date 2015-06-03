@@ -107,11 +107,6 @@ public class OfflineGame extends Activity {
 
         timerView = (TextView) findViewById(R.id.timerTextView);
 
-        /* REMOVE AFTER TESTING */
-        //isMultiplayer = true;
-        /************************/
-
-
         if (isMultiplayer || isFromChallenge)
             timerView.setVisibility(View.VISIBLE);
 
@@ -505,10 +500,6 @@ public class OfflineGame extends Activity {
         ChallengeBO challengeBO = new ChallengeBO();
         challengeBO.setChallengeSender(fromUser);
         challengeBO.setChallengerResult(challngResultFromParse);
-
-
-
-
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (result > Float.parseFloat(challngResultFromParse))

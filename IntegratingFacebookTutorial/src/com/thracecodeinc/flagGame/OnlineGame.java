@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -75,7 +75,9 @@ public class OnlineGame extends FragmentActivity {
     private boolean firstRun;
     private boolean correctAnswerGiven = false;
 
-    private boolean countriesMode;
+    private int numberOfQuestions;
+
+    private boolean countryMode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +86,6 @@ public class OnlineGame extends FragmentActivity {
         String actionBarTitle = getString(R.string.guess_country);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
-        countriesMode = false;
         firstRun = true;
         customInfoWindowForMarker = new CustomInfoWindowForMarker();
         fileNameList = new ArrayList<String>();
@@ -92,6 +93,11 @@ public class OnlineGame extends FragmentActivity {
         regionsMap = new HashMap<String, Boolean>();
 
         SharedMethods.getCapitals(getAssets(), capitalsMap);
+
+        SharedPreferences prefs = OnlineGame.this.getSharedPreferences(
+                "com.thracecodeinc.falgGame", Context.MODE_PRIVATE);
+        countryMode = prefs.getBoolean("countryMode", true);
+        numberOfQuestions = prefs.getInt("numberOfQuestions", 10);
 
         guessRows = getIntent().getIntExtra("guessRows", 2);
         random = new Random();
@@ -133,7 +139,7 @@ public class OnlineGame extends FragmentActivity {
         );
         questionNumberTextView.setText(
                 getResources().getString(R.string.question) + " 1 " +
-                        getResources().getString(R.string.of) + " 10");
+                        getResources().getString(R.string.of) + " " + numberOfQuestions);
 
         resetQuiz();
         setUpMapIfNeeded();
@@ -165,7 +171,7 @@ public class OnlineGame extends FragmentActivity {
 
         int flagCounter = 1;
         int numberOfFlags = fileNameList.size();
-        while (flagCounter <= 10) {
+        while (flagCounter <= numberOfQuestions) {
             int randomIndex = random.nextInt(numberOfFlags);
             String fileName = fileNameList.get(randomIndex);
             if (!quizCountriesList.contains(fileName)) {
@@ -216,7 +222,7 @@ public class OnlineGame extends FragmentActivity {
         questionNumberTextView.setText(
                 getResources().getString(R.string.question) + " " +
                         (correctAnswers + 1) + " " +
-                        getResources().getString(R.string.of) + " 10");
+                        getResources().getString(R.string.of) + " " + numberOfQuestions);
 
         String region =
                 nextImageName.substring(0, nextImageName.indexOf('-'));
@@ -249,7 +255,7 @@ public class OnlineGame extends FragmentActivity {
                         (Button) inflater.inflate(R.layout.flags_guess_button, null);
                 String fileName = fileNameList.get((row * 2) + column);
                 //Set button text to country name from string resource files
-                if (countriesMode)
+                if (countryMode)
                     newGuessButton.setText(getCountryNameFromStrings(this, fileName));
                 else
                     newGuessButton.setText(capitalsMap.get(fileName.substring(fileName.indexOf("-") + 1)));
@@ -261,7 +267,7 @@ public class OnlineGame extends FragmentActivity {
         int row = random.nextInt(guessRows);
         int column = random.nextInt(2);
         TableRow randomTableRow = getTableRow(row);
-        if (countriesMode)
+        if (countryMode)
             ((Button)randomTableRow.getChildAt(column)).setText(getCountryNameFromStrings(this, correctAnswer));
         else
             ((Button)randomTableRow.getChildAt(column)).setText(capitalsMap.get(correctAnswer.substring(correctAnswer.indexOf("-")+1)));
@@ -458,7 +464,7 @@ public class OnlineGame extends FragmentActivity {
 
                                 setUpMap(latLng);
 
-                                if (correctAnswers == 10) {
+                                if (correctAnswers == numberOfQuestions) {
                                     handler.postDelayed(
                                             new Runnable() {
                                                 @Override
