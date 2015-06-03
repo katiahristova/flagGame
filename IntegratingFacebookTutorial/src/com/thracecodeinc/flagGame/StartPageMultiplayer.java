@@ -47,6 +47,7 @@ public class StartPageMultiplayer extends FragmentActivity {
     Button selectRegionsButton;
     Button multiplayer;
     Button seeChallenge;
+    Button optionsButton;
     int guessRows = 0;
     boolean networkAllowed;
 
@@ -74,6 +75,7 @@ public class StartPageMultiplayer extends FragmentActivity {
         selectRegionsButton = (Button) findViewById(R.id.buttonSelectRegions);
         multiplayer = (Button) findViewById(R.id.buttonMultiplayer);
         seeChallenge = (Button) findViewById(R.id.see_challenges);
+        optionsButton = (Button) findViewById(R.id.buttonOptions);
 
         seeChallenge.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +110,13 @@ public class StartPageMultiplayer extends FragmentActivity {
             public void onClick(View view) {
                 regionsMap = SharedMethods.getRegionsMap(StartPageMultiplayer.this);
 
+            }
+        });
+
+        optionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedMethods.optionsPopup(StartPageMultiplayer.this);
             }
         });
     }

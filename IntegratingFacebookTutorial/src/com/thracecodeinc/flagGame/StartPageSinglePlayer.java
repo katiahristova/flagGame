@@ -52,9 +52,6 @@ public class StartPageSinglePlayer extends FragmentActivity {
     boolean wifiOn;
     boolean networkAllowed;
 
-    boolean countryMode = true;
-    int numberOfQuestions = 10;
-
     private final int GALLERY_ACTIVITY_CODE=200;
     private final int RESULT_CROP = 400;
     String picturePath = "";
