@@ -55,7 +55,7 @@ public class OfflineGame extends Activity {
     private int correctGuesses; //number of correct guesses
     private int incorrectGuessesForQuestion; //number of incorrect guesses for a particular question
 
-    private int guessRows, numberOfQuestions;
+    private int guessRows, numberOfQuestions, timerSeconds;
     private Random random;
     private Handler handler;
     private Animation shakeAnimation;
@@ -91,6 +91,7 @@ public class OfflineGame extends Activity {
         numberOfQuestions = prefs.getInt("numberOfQuestions", 10);
 
         guessRows = getIntent().getIntExtra("guessRows", guessRows);
+        setTimerSeconds(guessRows);
 
         Toast.makeText(getApplicationContext(),"guessrows "+guessRows,Toast.LENGTH_LONG);
         fileNameList = new ArrayList<String>();
@@ -259,9 +260,9 @@ public class OfflineGame extends Activity {
             myRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    timerView.setText("0"+ (5-count/100)+ ":" + (100-count%100));
+                    timerView.setText("0"+ ((timerSeconds-1)-count/100)+ ":" + (100-count%100));
                     count++;
-                    if (count == 600 ) {
+                    if (count == (timerSeconds*100) ) {
                         T.cancel();
                         timerView.setText("00:00");
                         //++totalGuesses;
@@ -539,6 +540,22 @@ public class OfflineGame extends Activity {
     }
 
 
+    //Sets the timer to a different number of seconds depending on the number of choices
+    private void setTimerSeconds(int guesses)
+    {
+        switch (guesses)
+        {
+            case 1:
+                timerSeconds = 5;
+                break;
+            case 2:
+                timerSeconds = 10;
+                break;
+            case 3:
+                timerSeconds = 15;
+                break;
+        }
+    }
     @Override
     public void onBackPressed() {
         SharedMethods.quitGamePopup(this);
