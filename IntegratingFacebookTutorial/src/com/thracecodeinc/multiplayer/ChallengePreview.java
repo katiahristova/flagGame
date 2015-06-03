@@ -44,7 +44,7 @@ public class ChallengePreview extends ListActivity {
     private String[] senderresult;
     private boolean countriesMode;
     private String fromUser;
-    private int guessRows;
+    private int[] guessRows;
     private ArrayList<Map<String, Boolean>> regColl;
     private Map<String, Boolean> regionsMap;
 
@@ -57,7 +57,6 @@ public class ChallengePreview extends ListActivity {
         String actionBarTitle = getString(R.string.challenge_screen);
         getActionBar().setTitle(Html.fromHtml("<font color='#20b2aa'>" + actionBarTitle + "</font>"));
 
-        guessRows = getIntent().getIntExtra("guessRows", 1);
         fromUser = getIntent().getStringExtra("");
 
 
@@ -74,8 +73,9 @@ public class ChallengePreview extends ListActivity {
                         regColl = new ArrayList<Map<String, Boolean>>();
                         userNames = new String[list.size()];
                         senderresult = new String[list.size()];
+                        guessRows = new int[list.size()];
 
-                        for (int i=0; i<list.size();i++) {
+                        for (int i = 0; i < list.size(); i++) {
                             try {
                                 regionsMap = new HashMap<>();
                                 String[] regionNms =
@@ -92,6 +92,8 @@ public class ChallengePreview extends ListActivity {
                                 regColl.add(regionsMap);
 
                                 senderresult[i] = list.get(i).getString("senderresult");
+                                guessRows[i] = list.get(i).getInt("Choices");
+
                                 ParseObject p = list.get(i).getParseObject("Sender");
 
                                 if (p != null) {
@@ -127,10 +129,6 @@ public class ChallengePreview extends ListActivity {
 
     }
 
-
-    public void aquareUserObj() {
-
-    }
 
 
     @Override

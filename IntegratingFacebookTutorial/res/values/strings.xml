@@ -26,6 +26,7 @@
     <string name="your_score">your score: </string>
     <string name="radio_male">Male</string>
     <string name="radio_female">Female</string>
+    <string name="challenge_options">options: </string>
 </resources>
 
 

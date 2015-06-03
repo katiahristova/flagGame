@@ -2,16 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/dimen10dp"
     android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal" >
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <com.parse.ParseImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:id="@+id/user_challenge_image"/>
+
+        <TextView
+            android:layout_gravity="center"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#1089D1"
+            android:id="@+id/user_challenger_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false" />
     </LinearLayout>
 
 
@@ -28,29 +39,27 @@
 
     <TextView
         android:textColor="#1089D1"
-        android:id="@+id/user_challenger_name"
+        android:id="@+id/challenger_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <Button
-        android:id="@+id/accept"
-        android:layout_marginLeft="@dimen/dimen50dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_gravity="right"
-        android:gravity="right"
-        android:text="@string/accept_challenge"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp" />
+    <View
+        android:layout_marginLeft="@dimen/dimen10dp"
+        android:layout_marginRight="@dimen/dimen10dp"
+        android:layout_width="1dp"
+        android:layout_height="fill_parent"
+        android:background="#FF0000FF" />
 
-    <Button
-        android:id="@+id/decline"
-        android:layout_gravity="right"
-        android:gravity="right"
+    <TextView
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/decline_challenge"
+        android:textColor="#1089D1"
+        android:id="@+id/challenger_options"
         android:layout_width="wrap_content"
-        android:layout_height="32dp" />
+        android:layout_height="wrap_content"
+        android:clickable="false" />
+
+
 </LinearLayout>
 
 
@@ -59,14 +68,7 @@
             android:layout_height="1dp"
             android:background="#FF0000FF" />
 
-        <TextView
-            android:layout_marginTop="@dimen/dimen10dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#1089D1"
-            android:id="@+id/challenger_score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="false" />
+
 
         <TextView
             android:layout_marginTop="@dimen/dimen10dp"
@@ -77,7 +79,35 @@
             android:layout_height="wrap_content"
             android:clickable="false" />
 
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#FF0000FF" />
 
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@+id/accept"
+        android:layout_marginLeft="@dimen/dimen50dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:gravity="right"
+        android:text="@string/accept_challenge"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp" />
+
+    <Button
+        android:layout_marginLeft="@dimen/dimen20dp"
+        android:id="@+id/decline"
+        android:gravity="right"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/decline_challenge"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp" />
+
+</LinearLayout>
 
     </LinearLayout>
 

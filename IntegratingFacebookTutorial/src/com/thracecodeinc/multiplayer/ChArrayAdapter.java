@@ -30,10 +30,10 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
     private final ArrayList<ParseFile> parseFileArray;
     private final String[] senderResult;
     private Button acceptBtn, declineBtn;
-    private int guessRows;
+    private int[] guessRows;
     private ArrayList<Map<String, Boolean>> regionsArray;
     public ChArrayAdapter(Context context, String[] values, ArrayList<ParseFile> userImageMap,
-                          String[] senderresult, int guessRows, ArrayList<Map<String, Boolean>> regionsArray, String fromUser) {
+                          String[] senderresult, int[] guessRows, ArrayList<Map<String, Boolean>> regionsArray, String fromUser) {
         super(context, R.layout.challenge_preview_item, values);
         this.context = context;
         this.values = values;
@@ -54,6 +54,7 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
         TextView usrName = (TextView) rowView.findViewById(R.id.user_challenger_name);
         TextView chlngScore = (TextView) rowView.findViewById(R.id.challenger_score);
         TextView chlngRegions = (TextView) rowView.findViewById(R.id.challenger_regions);
+        TextView challengesOptions = (TextView) rowView.findViewById(R.id.challenger_options);
         ParseImageView userImage = (ParseImageView) rowView.findViewById(R.id.user_challenge_image);
         acceptBtn = (Button) rowView.findViewById(R.id.accept);
 
@@ -64,9 +65,11 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
             }
         });
 
+        challengesOptions.setText(context.getResources().getString(R.string.challenge_options) + " "
+                + guessRows[position]*2);
         chlngRegions.setText(context.getResources().getString(R.string.challenge_regions) + ": "
                 + extractRegions(position));
-        usrName.setText(context.getResources().getString(R.string.player) + ": " + values[position]);
+        usrName.setText(values[position]);
         chlngScore.setText(context.getResources().getString(R.string.score) + ": " +
                 String.format("%.02f%%",Float.parseFloat(senderResult[position])));
 
@@ -74,7 +77,7 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
             @Override
             public void onClick(View v) {
                 Intent resultIntent = new Intent(context, OfflineGame.class);
-                resultIntent.putExtra("guessRows", guessRows);
+                resultIntent.putExtra("guessRows", guessRows[position]);
                 resultIntent.putExtra("regionsMap", (Serializable) regionsArray.get(position));
                 resultIntent.putExtra("startedByUser", true);
                 resultIntent.putExtra("multiplayer", false);
@@ -93,11 +96,10 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
         Map<String, Boolean> m = regionsArray.get(index);
         for (Map.Entry<String, Boolean> entry : m.entrySet()) {
             if (entry.getValue())
-            key = key+"/ "+entry.getKey();
+            key = key+" - "+entry.getKey();
 
         }
-
-        return key;
+        return key.replace("_"," ");
     }
 
 }

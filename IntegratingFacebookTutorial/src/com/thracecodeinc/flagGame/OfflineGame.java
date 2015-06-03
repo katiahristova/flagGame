@@ -256,11 +256,11 @@ public class OfflineGame extends Activity {
             myRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    timerView.setText("Timer: 0"+ (5-count/100)+ ":" + (100-count%100));
+                    timerView.setText("0"+ (5-count/100)+ ":" + (100-count%100));
                     count++;
                     if (count == 600 ) {
                         T.cancel();
-                        timerView.setText("Timer: 00:00");
+                        timerView.setText("00:00");
                         //++totalGuesses;
                         ++questionsPassed;
                         totalGuesses += (guessRows - incorrectGuessesForQuestion);
@@ -299,7 +299,7 @@ public class OfflineGame extends Activity {
         {
             if (isMultiplayer || isFromChallenge) {
                 T.cancel();
-                timerView.setText("Timer: 00:00");
+                timerView.setText("00:00");
             }
             ++questionsPassed;
             ++correctGuesses;
@@ -511,13 +511,16 @@ public class OfflineGame extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (result > Float.parseFloat(challngResultFromParse))
             builder.setTitle("You Won");
+        else if (result == Float.parseFloat(challngResultFromParse))
+            builder.setTitle("Tie Game");
         else
             builder.setTitle("You Lost");
 
         builder.setMessage(String.format("%d %s, %.02f%% %s",
                 totalGuesses, getResources().getString(R.string.guesses),
                 (result),
-                getResources().getString(R.string.correct)) + "\nChallenger's score " + challngResultFromParse);
+                getResources().getString(R.string.correct)) + "\nChallenger's score " +
+                String.format("%.02f%%",Float.parseFloat(challngResultFromParse)));
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.ok,
                 new DialogInterface.OnClickListener() {
@@ -526,6 +529,7 @@ public class OfflineGame extends Activity {
                         timerView.setVisibility(View.INVISIBLE);
                         Intent i = new Intent(OfflineGame.this, StartPageSinglePlayer.class);
                         startActivity(i);
+                        finish();
                     }
                 }
         );

@@ -24,7 +24,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.thracecodeinc.multiplayer.ChallengeParseUser;
 import com.thracecodeinc.multiplayer.ChallengePreview;
 
@@ -55,6 +59,7 @@ public class StartPageMultiplayer extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.flags_multiplayer_start_activity_layout);
 
+        signUserToChannel();
         //Flag for LittleHands permissions
         networkAllowed = true;
 
@@ -264,5 +269,24 @@ public class StartPageMultiplayer extends FragmentActivity {
             Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
             toast.show();
         }
+    }
+
+    public void signUserToChannel(){
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("device_id", ParseUser.getCurrentUser().getObjectId());
+        installation.saveInBackground();
+
+        ParsePush.subscribeInBackground("ChallengeChanel", new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+                } else {
+                    Log.e("com.parse.push", "failed to subscribe for push", e);
+                }
+            }
+        });
+
+        //PushService.setDefaultPushCallback(this, OfflineGame.class);
     }
 }
