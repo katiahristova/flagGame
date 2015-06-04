@@ -1,6 +1,8 @@
 package com.thracecodeinc.multiplayer;
 
 import android.app.ListActivity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.Toast;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseImageView;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -26,7 +29,7 @@ import java.util.Map;
  */
 public class ChallengePreview extends ListActivity {
     private String[] userNames;
-    private ArrayList<ParseFile> userImageArray;
+    private ArrayList<Bitmap> userImageArray;
     private String[] senderresult;
     private boolean countriesMode;
     private String fromUser;
@@ -35,6 +38,7 @@ public class ChallengePreview extends ListActivity {
     private Map<String, Boolean> regionsMap;
     private String[] challengerObjID;
     private String[] challengeActiviryObjID;
+    private Bitmap imageView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,8 +95,10 @@ public class ChallengePreview extends ListActivity {
                                 if (p != null) {
                                     userNames[i] = p.getString("username");
                                     ParseFile fileuserImg = p.getParseFile("userimage");
+                                    byte [] file = fileuserImg.getData();
                                     if (fileuserImg != null) {
-                                        userImageArray.add(fileuserImg);
+                                        imageView = BitmapFactory.decodeByteArray(file, 0, file.length);
+                                        userImageArray.add(imageView);
                                     }
                                 }
                                 //Toast.makeText(ChallengePreview.this, p.getString("username"),Toast.LENGTH_LONG).show();

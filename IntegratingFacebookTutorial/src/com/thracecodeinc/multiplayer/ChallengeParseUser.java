@@ -2,6 +2,8 @@ package com.thracecodeinc.multiplayer;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -65,15 +67,15 @@ public class ChallengeParseUser extends DialogFragment {
                 username.setText(userObj.getUsername());
                 objId.setText(userObj.getString("gender"));
 
-                final ParseFile fileuserImg = userObj.getParseFile("userimage");
-                if (fileuserImg != null) {
-                    userImage.setParseFile(fileuserImg);
-                    userImage.loadInBackground(new GetDataCallback() {
-                        public void done(byte[] data, ParseException e) {
+                ParseFile fileuserImg = userObj.getParseFile("userimage");
+                try {
+                    byte [] file = fileuserImg.getData();
+                    Bitmap imageView = BitmapFactory.decodeByteArray(file, 0, file.length);
+                    userImage.setImageBitmap(imageView);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
-                        }
-                    });
-                } else userImage.setImageResource(R.drawable.ic_launcher);
 
                 return view;
             };

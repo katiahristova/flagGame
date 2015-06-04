@@ -2,6 +2,7 @@ package com.thracecodeinc.multiplayer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
     private String fromUser;
     private final Context context;
     private final String[] values;
-    private final ArrayList<ParseFile> parseFileArray;
+    private final ArrayList<Bitmap> parseFileArray;
     private final String[] senderResult;
     private Button acceptBtn, declineBtn;
     private int[] guessRows;
@@ -37,7 +38,7 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
     private String[] challengeActivityObjId;
 
 
-    public ChArrayAdapter(Context context, String[] values, ArrayList<ParseFile> userImageMap,
+    public ChArrayAdapter(Context context, String[] values, ArrayList<Bitmap> userImageMap,
                           String[] senderresult, int[] guessRows,
                           ArrayList<Map<String, Boolean>> regionsArray, String fromUser,
                           String[] challengerObjID, String[] challengeActiviryObjID) {
@@ -67,12 +68,8 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
         acceptBtn = (Button) rowView.findViewById(R.id.accept);
 
 
-        userImage.setParseFile(parseFileArray.get(position));
-        userImage.loadInBackground(new GetDataCallback() {
-            public void done(byte[] data, ParseException e) {
+        userImage.setImageBitmap(parseFileArray.get(position));
 
-            }
-        });
 
         challengesOptions.setText(context.getResources().getString(R.string.challenge_options) + " "
                 + guessRows[position]*2);
