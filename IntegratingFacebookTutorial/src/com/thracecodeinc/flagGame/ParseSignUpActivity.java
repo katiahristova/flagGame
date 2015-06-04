@@ -17,12 +17,15 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.Random;
 
 
 /**
@@ -108,10 +111,26 @@ public class ParseSignUpActivity extends Activity {
                 dlg.show();
 
                 // Set up a new Parse user
+                Bitmap usrDefaultImage = BitmapFactory.decodeResource(getResources(),
+                        R.drawable.puppy);
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                if (selectedBitmap != null)
+                    selectedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                else
+                    usrDefaultImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+                ParseFile pFile = new ParseFile(randomFIleName(), stream.toByteArray());
+                try {
+                    pFile.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
                 ParseUser user = new ParseUser();
                 user.setUsername(usernameView.getText().toString());
                 user.setPassword(passwordView.getText().toString());
-
+                user.put("userimage", pFile);
                 // Call the Parse signup method
                 user.signUpInBackground(new SignUpCallback() {
 
@@ -122,9 +141,9 @@ public class ParseSignUpActivity extends Activity {
                             // Show the error message
                             Toast.makeText(ParseSignUpActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                         } else {
-                            if (selectedBitmap==null)
+                            if (selectedBitmap == null)
                                 selectedBitmap = BitmapFactory.decodeResource(getResources(),
-                                        R.drawable.kitten);
+                                        R.drawable.puppy);
                             //If a profile picture was set, save that locally
                             if (selectedBitmap != null) {
                                 SharedMethods.saveNewPicture(ParseSignUpActivity.this, selectedBitmap);
@@ -193,5 +212,16 @@ public class ParseSignUpActivity extends Activity {
                     setPictureButton.setImageBitmap(selectedBitmap);
             }
         }
+    }
+
+    public String randomFIleName() {
+    String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    Random rnd = new Random();
+
+        StringBuilder sb = new StringBuilder(10);
+        for (int i = 0; i < 10; i++)
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        return sb.toString();
+
     }
 }

@@ -65,6 +65,7 @@ public class ParseDispatchActivity extends Activity {
                 // Check if there is current user info
                 if (ParseUser.getCurrentUser() != null) {
                     // Start an intent for the logged in activity
+                    signUserToChannel();
                     startActivity(new Intent(ParseDispatchActivity.this, StartPageMultiOrSingleplayer.class));
                 } else {
                     // Start and intent for the logged out activity
@@ -89,4 +90,22 @@ public class ParseDispatchActivity extends Activity {
     }
 
 
+    public void signUserToChannel(){
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("device_id", ParseUser.getCurrentUser().getObjectId());
+        installation.saveInBackground();
+
+        ParsePush.subscribeInBackground("ChallengeChanel", new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+                } else {
+                    Log.e("com.parse.push", "failed to subscribe for push", e);
+                }
+            }
+        });
+
+        //PushService.setDefaultPushCallback(this, OfflineGame.class);
+    }
 }

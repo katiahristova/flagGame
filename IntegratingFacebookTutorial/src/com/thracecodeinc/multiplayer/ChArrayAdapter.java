@@ -31,9 +31,15 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
     private final String[] senderResult;
     private Button acceptBtn, declineBtn;
     private int[] guessRows;
+    private String[] challengerObjId;
     private ArrayList<Map<String, Boolean>> regionsArray;
+    private String[] challengeActivityObjId;
+
+
     public ChArrayAdapter(Context context, String[] values, ArrayList<ParseFile> userImageMap,
-                          String[] senderresult, int[] guessRows, ArrayList<Map<String, Boolean>> regionsArray, String fromUser) {
+                          String[] senderresult, int[] guessRows,
+                          ArrayList<Map<String, Boolean>> regionsArray, String fromUser,
+                          String[] challengerObjID, String[] challengeActiviryObjID) {
         super(context, R.layout.challenge_preview_item, values);
         this.context = context;
         this.values = values;
@@ -42,7 +48,8 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
         this.guessRows = guessRows;
         this.regionsArray = regionsArray;
         this.fromUser = fromUser;
-
+        this.challengerObjId = challengerObjID;
+        this.challengeActivityObjId = challengeActiviryObjID;
     }
 
     @Override
@@ -82,8 +89,10 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
                 resultIntent.putExtra("startedByUser", true);
                 resultIntent.putExtra("multiplayer", false);
                 resultIntent.putExtra("fromChallenge", true);
-                resultIntent.putExtra("fromuser", fromUser);
+                resultIntent.putExtra("fromuser", values[position]);
                 resultIntent.putExtra("challengerResult", senderResult[position]);
+                resultIntent.putExtra("challengerobjid", challengerObjId[position]);
+                resultIntent.putExtra("challengeActivityObjId", challengeActivityObjId[position]);
                 context.startActivity(resultIntent);
             }
         });

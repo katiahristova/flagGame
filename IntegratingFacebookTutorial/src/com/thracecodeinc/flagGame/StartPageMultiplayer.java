@@ -60,7 +60,6 @@ public class StartPageMultiplayer extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.flags_multiplayer_start_activity_layout);
 
-        signUserToChannel();
         //Flag for LittleHands permissions
         networkAllowed = true;
 
@@ -121,31 +120,31 @@ public class StartPageMultiplayer extends FragmentActivity {
         });
     }
 
-    public void showSelectNumberOfChoicesPopup(final Intent i)
-    {
-
-        final String[] possibleChoices =
-                getResources().getStringArray(R.array.guessesList);
-
-        AlertDialog.Builder choicesBuilder =
-                new AlertDialog.Builder(StartPageMultiplayer.this);
-        choicesBuilder.setTitle(R.string.choices);
-
-        choicesBuilder.setItems(R.array.guessesList,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        guessRows = Integer.parseInt(
-                                possibleChoices[item].toString()) / 2;
-                        i.putExtra("guessRows", guessRows);
-                        i.putExtra("regionsMap", regionsMap);
-                        startActivity(i);
-                        finish();
-                    }
-                }
-        );
-        AlertDialog choicesDialog = choicesBuilder.create();
-        choicesDialog.show();
-    }
+//    public void showSelectNumberOfChoicesPopup(final Intent i)
+//    {
+//
+//        final String[] possibleChoices =
+//                getResources().getStringArray(R.array.guessesList);
+//
+//        AlertDialog.Builder choicesBuilder =
+//                new AlertDialog.Builder(StartPageMultiplayer.this);
+//        choicesBuilder.setTitle(R.string.choices);
+//
+//        choicesBuilder.setItems(R.array.guessesList,
+//                new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int item) {
+//                        guessRows = Integer.parseInt(
+//                                possibleChoices[item].toString()) / 2;
+//                        i.putExtra("guessRows", guessRows);
+//                        i.putExtra("regionsMap", regionsMap);
+//                        startActivity(i);
+//                        finish();
+//                    }
+//                }
+//        );
+//        AlertDialog choicesDialog = choicesBuilder.create();
+//        choicesDialog.show();
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -204,24 +203,7 @@ public class StartPageMultiplayer extends FragmentActivity {
         SharedMethods.updatePhoto(this, picturePath, requestCode, resultCode, GALLERY_ACTIVITY_CODE, RESULT_CROP, data);
     }
 
-    public void signUserToChannel(){
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put("device_id", ParseUser.getCurrentUser().getObjectId());
-        installation.saveInBackground();
 
-        ParsePush.subscribeInBackground("ChallengeChanel", new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
-                } else {
-                    Log.e("com.parse.push", "failed to subscribe for push", e);
-                }
-            }
-        });
-
-        //PushService.setDefaultPushCallback(this, OfflineGame.class);
-    }
 
     @Override
     public void onBackPressed() {

@@ -1,35 +1,21 @@
 package com.thracecodeinc.multiplayer;
 
-
-import android.app.Activity;
 import android.app.ListActivity;
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseImageView;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseQueryAdapter;
-
 import com.parse.ParseUser;
 import com.thracecodeinc.flagGame.R;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +33,8 @@ public class ChallengePreview extends ListActivity {
     private int[] guessRows;
     private ArrayList<Map<String, Boolean>> regColl;
     private Map<String, Boolean> regionsMap;
+    private String[] challengerObjID;
+    private String[] challengeActiviryObjID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +52,7 @@ public class ChallengePreview extends ListActivity {
         query.include("Sender");
         query.orderByDescending("createdAt");
         query.whereEqualTo("Receiver", ParseUser.getCurrentUser());
-        //query.orderByDescending("objectId");
+        query.whereEqualTo("played", false);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
@@ -74,6 +62,8 @@ public class ChallengePreview extends ListActivity {
                         userNames = new String[list.size()];
                         senderresult = new String[list.size()];
                         guessRows = new int[list.size()];
+                        challengerObjID = new String[list.size()];
+                        challengeActiviryObjID = new String[list.size()];
 
                         for (int i = 0; i < list.size(); i++) {
                             try {
@@ -91,8 +81,10 @@ public class ChallengePreview extends ListActivity {
 
                                 regColl.add(regionsMap);
 
+                                challengerObjID[i] = list.get(i).getParseObject("Sender").getObjectId();
                                 senderresult[i] = list.get(i).getString("senderresult");
                                 guessRows[i] = list.get(i).getInt("Choices");
+                                challengeActiviryObjID[i] = list.get(i).getObjectId();
 
                                 ParseObject p = list.get(i).getParseObject("Sender");
 
@@ -111,7 +103,7 @@ public class ChallengePreview extends ListActivity {
 
 
                         setListAdapter(new ChArrayAdapter(ChallengePreview.this, userNames, userImageArray,
-                                senderresult, guessRows, regColl, fromUser));
+                                senderresult, guessRows, regColl, fromUser, challengerObjID, challengeActiviryObjID));
                     }
                 }
             }

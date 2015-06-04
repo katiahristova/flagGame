@@ -26,6 +26,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseUser;
 import com.thracecodeinc.challengeBO.ChallengeBO;
 import com.thracecodeinc.multiplayer.ChallengeParseUser;
 
@@ -70,6 +71,8 @@ public class OfflineGame extends Activity {
     private boolean isFromChallenge;
     private String fromUser;
     private String challngResultFromParse;
+    private String challngObjID;
+    private String challengeActivityObjId;
 
     Timer T;
     Runnable myRunnable;
@@ -93,7 +96,7 @@ public class OfflineGame extends Activity {
         guessRows = getIntent().getIntExtra("guessRows", guessRows);
         setTimerSeconds(guessRows);
 
-        Toast.makeText(getApplicationContext(),"guessrows "+guessRows,Toast.LENGTH_LONG);
+        Toast.makeText(getApplicationContext(), "guessrows " + guessRows, Toast.LENGTH_LONG);
         fileNameList = new ArrayList<String>();
         quizCountriesList = new ArrayList<String>();
         regionsMap = new HashMap<String, Boolean>();
@@ -104,7 +107,10 @@ public class OfflineGame extends Activity {
         isFromChallenge = getIntent().getBooleanExtra("fromChallenge", false);
         fromUser = getIntent().getStringExtra("fromuser");
         challngResultFromParse = getIntent().getStringExtra("challengerResult");
+        challngObjID = getIntent().getStringExtra("challengerobjid");
+        challengeActivityObjId = getIntent().getStringExtra("challengeActivityObjId");
 
+Toast.makeText(getApplicationContext(), challngObjID,Toast.LENGTH_LONG).show();
         timerView = (TextView) findViewById(R.id.timerTextView);
 
         if (isMultiplayer || isFromChallenge)
@@ -498,16 +504,33 @@ public class OfflineGame extends Activity {
     public void challengeCompleted(float result){
 
         ChallengeBO challengeBO = new ChallengeBO();
-        challengeBO.setChallengeSender(fromUser);
+        challengeBO.setChallengeObjId(challengeActivityObjId);
+        challengeBO.setChallengeSenderObjId(challngObjID);
+        challengeBO.setPlayerChallengedResult(result);
         challengeBO.setChallengerResult(challngResultFromParse);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        if (result > Float.parseFloat(challngResultFromParse))
+        if (result > Float.parseFloat(challngResultFromParse)) {
             builder.setTitle("You Won");
-        else if (result == Float.parseFloat(challngResultFromParse))
+            challengeBO.setWinner(ParseUser.getCurrentUser().getUsername());
+            challengeBO.challengeCompletedQuery();
+            challengeBO.challengeCompletedPush(fromUser);
+            challengeBO.points(ParseUser.getCurrentUser().getObjectId());
+        }
+        else if (result == Float.parseFloat(challngResultFromParse)) {
             builder.setTitle("Tie Game");
-        else
+            challengeBO.setTieGame(true);
+            challengeBO.challengeCompletedPush(fromUser);
+            challengeBO.challengeCompletedQuery();
+
+        }
+        else {
             builder.setTitle("You Lost");
+            challengeBO.setWinner(fromUser);
+            challengeBO.challengeCompletedPush(fromUser);
+            challengeBO.challengeCompletedQuery();
+            challengeBO.points(challengeBO.getChallengeObjId());
+        }
 
         builder.setMessage(String.format("%d %s, %.02f%% %s",
                 totalGuesses, getResources().getString(R.string.guesses),
@@ -562,8 +585,11 @@ public class OfflineGame extends Activity {
     protected void onPause()
     {
         super.onPause();
-        if (isMultiplayer)
-            finish();
-    }
+        if (isMultiplayer || isFromChallenge){
+            //Intent i = new Intent(OfflineGame.this, StartPageMultiOrSingleplayer.class);
+            //startActivity(i);
+            //finish();
+        }
 
+    }
 }

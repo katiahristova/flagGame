@@ -44,7 +44,6 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
 
             alert = json.getString("alert").toString();
             fromUser = json.getString("fromuser").toString();
-            uniqueid = json.getString("uniquechallengeid".toString());
 
         } catch (JSONException e) {
 
@@ -55,57 +54,39 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
                 .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setSmallIcon(R.drawable.flags); //You can change your icon
-        mBuilder.setContentText(fromUser + "\n" + alert);
-        mBuilder.setContentTitle("You are challenged");
+        mBuilder.setSmallIcon(R.drawable.globe); //You can change your icon
+
+        if (alert.contains("Countries Challenge from")) {
+            mBuilder.setContentTitle("You are challenged");
+            mBuilder.setContentText(alert + "\n" + fromUser);
+        }
+        else {
+            mBuilder.setContentTitle("Challenge completed");
+            mBuilder.setContentText(fromUser + "\n" + alert);
+        }
+
         mBuilder.setSound(notifySound);
         mBuilder.setAutoCancel(true);
 
 // this is the activity that we will send the user, change this to anything you want
 
-        regionsMap = new HashMap<>();
-        String[] regionNms =
-                context.getResources().getStringArray(R.array.regionsList);
-        for (String region : regionNms)
-            regionsMap.put(region, false);
+        resultIntent = new Intent(context, ChallengePreview.class);
+        resultIntent.putExtra("startedByUser", true);
+        resultIntent.putExtra("multiplayer", false);
+        resultIntent.putExtra("fromChallenge", true);
+        resultIntent.putExtra("fromuser", fromUser);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Challenge");
-        query.whereEqualTo("uniqueID", uniqueid);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null) {
-                    if (!list.isEmpty()) {
-                        ArrayList<String> regionsFromParse = (ArrayList<String>) list.get(0).get("regions");
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(context,
+                0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                        for (String region : regionsFromParse) {
-                                regionsMap.put(region, true);
-                        }
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) context
+                .getSystemService(context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(mNotificationId, mBuilder.build());
 
 
-                        resultIntent = new Intent(context, ChallengePreview.class);
-                        resultIntent.putExtra("guessRows", list.get(0).getInt("Choices"));
-                        resultIntent.putExtra("regionsMap", regionsMap);
-                        resultIntent.putExtra("startedByUser", true);
-                        resultIntent.putExtra("multiplayer", false);
-                        resultIntent.putExtra("fromChallenge", true);
-                        resultIntent.putExtra("fromuser", fromUser);
-
-                        PendingIntent resultPendingIntent = PendingIntent.getActivity(context,
-                                0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                        mBuilder.setContentIntent(resultPendingIntent);
-
-                        NotificationManager notificationManager = (NotificationManager) context
-                                .getSystemService(context.NOTIFICATION_SERVICE);
-
-                        notificationManager.notify(mNotificationId, mBuilder.build());
-
-                    }
-                }
-
-            }
-        });
 
 
 
