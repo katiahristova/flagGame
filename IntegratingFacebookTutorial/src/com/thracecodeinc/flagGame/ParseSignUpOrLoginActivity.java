@@ -51,13 +51,7 @@ public class ParseSignUpOrLoginActivity extends Activity {
             }
         });
 
-        // Play button click handler
-        ((Button) findViewById(R.id.play)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Starts an intent for the sign up activity
-                startActivity(new Intent(ParseSignUpOrLoginActivity.this, StartPageSinglePlayer.class));
-            }
-        });
+
     }
 
     public static void loginFacebook(final Context c, final Activity a)

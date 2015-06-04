@@ -2,6 +2,7 @@ package com.thracecodeinc.flagGame;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +18,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +31,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
+import com.thracecodeinc.multiplayer.ChallengeParseUser;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -248,7 +251,13 @@ public class StartPageSinglePlayer extends FragmentActivity {
 
         if (id == R.id.user_pic)
         {
-            //SharedMethods.updateProfilePopup(StartPageSinglePlayer.this, this, GALLERY_ACTIVITY_CODE);
+            /*ProfileUpdateDialog profileUpdateDialog = new ProfileUpdateDialog();
+            profileUpdateDialog.setTargetFragment(profileUpdateDialog, GALLERY_ACTIVITY_CODE);
+            profileUpdateDialog.setTargetFragment(profileUpdateDialog, RESULT_CROP);
+            FragmentManager manager = getSupportFragmentManager();
+            profileUpdateDialog.show(manager, "");
+            */
+
             Intent gallery_Intent = new Intent(getApplicationContext(), GalleryUtil.class);
             startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
 

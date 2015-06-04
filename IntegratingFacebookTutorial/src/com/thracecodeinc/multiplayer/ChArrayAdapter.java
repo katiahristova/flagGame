@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -64,6 +65,7 @@ public class ChArrayAdapter extends ArrayAdapter<String> {
         TextView challengesOptions = (TextView) rowView.findViewById(R.id.challenger_options);
         ParseImageView userImage = (ParseImageView) rowView.findViewById(R.id.user_challenge_image);
         acceptBtn = (Button) rowView.findViewById(R.id.accept);
+
 
         userImage.setParseFile(parseFileArray.get(position));
         userImage.loadInBackground(new GetDataCallback() {

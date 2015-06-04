@@ -32,7 +32,6 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
 
     String alert; // This is the message string that send from push console
     String fromUser;
-    String uniqueid;
     @Override
     public void onReceive(final Context context, Intent intent) {
 
@@ -56,13 +55,15 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(R.drawable.globe); //You can change your icon
 
-        if (alert.contains("Countries Challenge from")) {
-            mBuilder.setContentTitle("You are challenged");
-            mBuilder.setContentText(alert + "\n" + fromUser);
-        }
-        else {
-            mBuilder.setContentTitle("Challenge completed");
-            mBuilder.setContentText(fromUser + "\n" + alert);
+        if (alert != null) {
+
+            if (alert.contains("Countries Challenge from")) {
+                mBuilder.setContentTitle("You are challenged");
+                mBuilder.setContentText(alert + "\n" + fromUser);
+            } else {
+                mBuilder.setContentTitle("Challenge completed");
+                mBuilder.setContentText(fromUser + "\n" + alert);
+            }
         }
 
         mBuilder.setSound(notifySound);

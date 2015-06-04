@@ -110,7 +110,8 @@ public class OfflineGame extends Activity {
         challngObjID = getIntent().getStringExtra("challengerobjid");
         challengeActivityObjId = getIntent().getStringExtra("challengeActivityObjId");
 
-Toast.makeText(getApplicationContext(), challngObjID,Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), fromUser,Toast.LENGTH_LONG).show();
+
         timerView = (TextView) findViewById(R.id.timerTextView);
 
         if (isMultiplayer || isFromChallenge)
@@ -258,10 +259,22 @@ Toast.makeText(getApplicationContext(), challngObjID,Toast.LENGTH_LONG).show();
         {   count = 0;
 
             T=new Timer();
+
             myRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    timerView.setText("0"+ ((timerSeconds-1)-count/100)+ ":" + (100-count%100));
+                    String timerText = "";
+                    if ((timerSeconds-1)-count/100 < 10)
+                        timerText += "0"+ ((timerSeconds-1)-count/100);
+                    else
+                        timerText += ((timerSeconds-1)-count/100);
+                    if ((99-count%100)>=10)
+                        timerText += ":" + (99-count%100);
+                    else
+                        timerText += ":" + "0" + (99-count%100);
+
+                    timerView.setText(timerText);
+                    //Log.d("MyApp", timerView.getText().toString());
                     count++;
                     if (count == (timerSeconds*100) ) {
                         T.cancel();
@@ -271,6 +284,8 @@ Toast.makeText(getApplicationContext(), challngObjID,Toast.LENGTH_LONG).show();
                         totalGuesses += (guessRows - incorrectGuessesForQuestion);
                         if (questionsPassed < numberOfQuestions)
                             loadNextFlag();
+                        else
+                            endOfGame();
                     }
                 }
             };
@@ -373,6 +388,7 @@ Toast.makeText(getApplicationContext(), challngObjID,Toast.LENGTH_LONG).show();
             builder.setPositiveButton(R.string.reset_quiz,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+
                             isMultiplayer = false;
                             timerView.setVisibility(View.INVISIBLE);
                             resetQuiz();
@@ -514,20 +530,20 @@ Toast.makeText(getApplicationContext(), challngObjID,Toast.LENGTH_LONG).show();
             builder.setTitle("You Won");
             challengeBO.setWinner(ParseUser.getCurrentUser().getUsername());
             challengeBO.challengeCompletedQuery();
-            challengeBO.challengeCompletedPush(fromUser);
+            challengeBO.challengeCompletedPush(ParseUser.getCurrentUser().getUsername());
             challengeBO.points(ParseUser.getCurrentUser().getObjectId());
         }
         else if (result == Float.parseFloat(challngResultFromParse)) {
             builder.setTitle("Tie Game");
             challengeBO.setTieGame(true);
-            challengeBO.challengeCompletedPush(fromUser);
+            challengeBO.challengeCompletedPush(ParseUser.getCurrentUser().getUsername());
             challengeBO.challengeCompletedQuery();
 
         }
         else {
             builder.setTitle("You Lost");
             challengeBO.setWinner(fromUser);
-            challengeBO.challengeCompletedPush(fromUser);
+            challengeBO.challengeCompletedPush(ParseUser.getCurrentUser().getUsername() );
             challengeBO.challengeCompletedQuery();
             challengeBO.points(challengeBO.getChallengeObjId());
         }

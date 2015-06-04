@@ -130,6 +130,7 @@ public class ParseSignUpActivity extends Activity {
                 ParseUser user = new ParseUser();
                 user.setUsername(usernameView.getText().toString());
                 user.setPassword(passwordView.getText().toString());
+                user.put("points", 0);
                 user.put("userimage", pFile);
                 // Call the Parse signup method
                 user.signUpInBackground(new SignUpCallback() {
@@ -152,7 +153,7 @@ public class ParseSignUpActivity extends Activity {
                                 File file = new File(path, ParseUser.getCurrentUser().getUsername() + "flagGameProfilePic.jpg"); // the File to save to
                                 try {
                                     fOut = new FileOutputStream(file);
-                                    selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+                                    selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
                                     fOut.flush();
                                     fOut.close(); // don't forget to close the stream
 
