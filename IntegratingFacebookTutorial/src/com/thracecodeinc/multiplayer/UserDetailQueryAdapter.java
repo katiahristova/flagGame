@@ -12,18 +12,17 @@ import com.parse.ParseQueryAdapter;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Samurai on 5/26/15.
  */
 public class UserDetailQueryAdapter {
-    static Context context;
     static ParseQueryAdapter.QueryFactory<ParseUser> factory;
-
+    static ParseQueryAdapter.QueryFactory<ParseObject> parseObjectQueryFactory;
     //query that populates the ListView in UserMode
     public static ParseQueryAdapter.QueryFactory<ParseUser> factory(Context contx){
-        context = contx;
         factory =
                 new ParseQueryAdapter.QueryFactory<ParseUser>() {
                     public ParseQuery<ParseUser> create() {
@@ -37,6 +36,36 @@ public class UserDetailQueryAdapter {
                     }
                 };
         return factory;
+    }
+
+    public static ParseQueryAdapter.QueryFactory<ParseObject> gameCompletedQuery(Context contx){
+        parseObjectQueryFactory =
+                new ParseQueryAdapter.QueryFactory<ParseObject>() {
+                    public ParseQuery<ParseObject> create() {
+                        ParseQuery<ParseObject> sender = ParseQuery.getQuery("Challenge");
+                        sender.whereEqualTo("Sender", ParseUser.getCurrentUser());
+                        sender.whereEqualTo("played", true);
+
+
+                        ParseQuery<ParseObject> receiver = ParseQuery.getQuery("Challenge");
+                        receiver.whereEqualTo("Receiver", ParseUser.getCurrentUser());
+                        receiver.whereEqualTo("played", true);
+
+                        List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
+                        queries.add(sender);
+                        queries.add(receiver);
+
+                        ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
+                        mainQuery.include("Sender");
+                        mainQuery.include("Receiver");
+                        mainQuery.orderByDescending("createdAt");
+                        //mainQuery.setLimit(1);
+                        return mainQuery;
+
+                    }
+                };
+
+        return parseObjectQueryFactory;
     }
 
 }

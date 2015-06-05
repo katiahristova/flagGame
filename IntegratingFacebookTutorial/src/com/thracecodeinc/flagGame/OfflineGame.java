@@ -536,6 +536,7 @@ public class OfflineGame extends Activity {
         else if (result == Float.parseFloat(challngResultFromParse)) {
             builder.setTitle("Tie Game");
             challengeBO.setTieGame(true);
+            challengeBO.setWinner("");
             challengeBO.challengeCompletedPush(ParseUser.getCurrentUser().getUsername());
             challengeBO.challengeCompletedQuery();
 

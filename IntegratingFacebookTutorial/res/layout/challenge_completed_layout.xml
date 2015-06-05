@@ -1,0 +1,76 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:background="@color/wallet_highlighted_text_holo_light"
+    android:focusableInTouchMode="true"
+    tools:context=".ChallengeParseUsers" >
+
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1">
+    <TableRow
+
+    android:id="@+id/tableRow1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/translucent_black" >
+
+    <TextView
+        android:gravity="center"
+    android:id="@+id/textView2"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:textStyle="bold"
+    android:textSize="18sp"
+    android:textColor="#fad06e"
+    android:text="@string/challenger" />
+
+
+    <TextView
+        android:gravity="center"
+    android:id="@+id/textView3"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:textStyle="bold"
+    android:textSize="18sp"
+    android:textColor="#fad06e"
+    android:text="@string/challenged" />
+
+    <TextView
+        android:gravity="center"
+    android:id="@+id/textView4"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:textStyle="bold"
+    android:textSize="18sp"
+    android:textColor="#fad06e"
+    android:text="@string/winner" />
+</TableRow>
+    </TableLayout>
+
+    <ListView
+        android:id="@+id/user_listview"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="12dp"
+        android:cacheColorHint="#00000000"
+        android:dividerHeight="2dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:divider="#FFCC00"
+        android:layout_weight="1"
+        />
+
+
+
+
+</LinearLayout>

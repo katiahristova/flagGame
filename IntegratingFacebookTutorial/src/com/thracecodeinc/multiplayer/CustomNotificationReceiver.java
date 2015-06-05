@@ -14,6 +14,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.thracecodeinc.flagGame.OfflineGame;
 import com.thracecodeinc.flagGame.R;
+import com.thracecodeinc.flagGame.StartPageMultiOrSingleplayer;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -24,7 +26,6 @@ import java.util.List;
  * Created by Samurai on 5/29/15.
  */
 public class CustomNotificationReceiver extends BroadcastReceiver {
-    private HashMap<String, Boolean> regionsMap;
     NotificationCompat.Builder mBuilder;
     Intent resultIntent;
     int mNotificationId = 001;
@@ -63,15 +64,19 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
             } else {
                 mBuilder.setContentTitle("Challenge completed");
                 mBuilder.setContentText(fromUser + "\n" + alert);
+                mNotificationId = 002;
             }
         }
 
         mBuilder.setSound(notifySound);
         mBuilder.setAutoCancel(true);
 
-// this is the activity that we will send the user, change this to anything you want
-
-        resultIntent = new Intent(context, ChallengePreview.class);
+        // this is the activity that we will send the user, change this to anything you want
+        if (mNotificationId == 001) {
+            resultIntent = new Intent(context, ChallengePreview.class);
+        } else {
+            resultIntent = new Intent(context, GameCompletedPreview.class);
+        }
         resultIntent.putExtra("startedByUser", true);
         resultIntent.putExtra("multiplayer", false);
         resultIntent.putExtra("fromChallenge", true);
@@ -86,10 +91,6 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
                 .getSystemService(context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(mNotificationId, mBuilder.build());
-
-
-
-
 
 
     }

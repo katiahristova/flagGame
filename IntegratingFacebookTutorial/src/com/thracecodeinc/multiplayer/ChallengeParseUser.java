@@ -78,7 +78,7 @@ public class ChallengeParseUser extends DialogFragment {
 
 
                 return view;
-            };
+            }
         };
         final ListView postsListView = (ListView) view.findViewById(R.id.user_listview);
         postsListView.setAdapter(postsQueryAdapter);

@@ -27,6 +27,12 @@
     <string name="radio_male">Male</string>
     <string name="radio_female">Female</string>
     <string name="challenge_options">options: </string>
+    <string name="challenger">Challenger\nscore</string>
+    <string name="points">points</string>
+    <string name="winner">Winner\npoints</string>
+    <string name="challenged">Challenged\nscore</string>
+    <string name="challenge_completed_preview">Completed challenges</string>
+    <string name="played_games">Played Games</string>
 </resources>
 
 

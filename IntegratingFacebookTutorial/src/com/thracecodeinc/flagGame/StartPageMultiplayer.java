@@ -31,6 +31,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.thracecodeinc.multiplayer.ChallengeParseUser;
 import com.thracecodeinc.multiplayer.ChallengePreview;
+import com.thracecodeinc.multiplayer.GameCompletedPreview;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,6 +49,7 @@ public class StartPageMultiplayer extends FragmentActivity {
     Button multiplayer;
     Button seeChallenge;
     Button optionsButton;
+    private Button completedChallenges;
     int guessRows = 0;
     boolean networkAllowed;
 
@@ -75,6 +77,15 @@ public class StartPageMultiplayer extends FragmentActivity {
         multiplayer = (Button) findViewById(R.id.buttonMultiplayer);
         seeChallenge = (Button) findViewById(R.id.see_challenges);
         optionsButton = (Button) findViewById(R.id.buttonOptions);
+        completedChallenges = (Button) findViewById(R.id.see_challenge_completed);
+
+        completedChallenges.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), GameCompletedPreview.class);
+                startActivity(i);
+            }
+        });
 
         seeChallenge.setOnClickListener(new View.OnClickListener() {
             @Override

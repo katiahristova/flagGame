@@ -85,4 +85,18 @@
         android:orientation="horizontal">
     </Button>
 
+    <Button android:id="@+id/see_challenge_completed"
+        android:layout_width="match_parent"
+        android:background="@drawable/button_state"
+        android:layout_marginTop="@dimen/dimen10dp"
+        android:layout_marginLeft="@dimen/dimen20dp"
+        android:layout_marginRight="@dimen/dimen20dp"
+        android:padding="@dimen/dimen5dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:text="@string/challenge_completed_preview"
+        android:textColor="@color/white"
+        android:orientation="horizontal">
+    </Button>
+
 </LinearLayout>
