@@ -193,18 +193,20 @@ public class ParseSignUpActivity extends Activity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        SharedMethods.updatePhoto(this, picturePath, requestCode, resultCode, GALLERY_ACTIVITY_CODE, RESULT_CROP, data);
+        //SharedMethods.updatePhoto(this, picturePath, requestCode, resultCode, GALLERY_ACTIVITY_CODE, RESULT_CROP, data);
 
         if (requestCode == GALLERY_ACTIVITY_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 picturePath = data.getStringExtra("picturePath");
                 Log.d("MyApp", "Filepath: " + picturePath);
+                Log.d("MyApp", "Pic selected");
                 //perform Crop on the Image Selected from Gallery
-                SharedMethods.performCrop(picturePath, this, RESULT_CROP);
+                SharedMethods.performCrop(picturePath, ParseSignUpActivity.this, RESULT_CROP);
             }
         }
 
         if (requestCode == RESULT_CROP) {
+            Log.d("MyApp", "Pic cropped");
             if (resultCode == Activity.RESULT_OK) {
                 Bundle extras = data.getExtras();
                 selectedBitmap = extras.getParcelable("data");
