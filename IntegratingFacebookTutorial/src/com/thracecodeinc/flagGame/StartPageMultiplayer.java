@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -53,9 +54,8 @@ public class StartPageMultiplayer extends FragmentActivity {
     int guessRows = 0;
     boolean networkAllowed;
 
-    private final int GALLERY_ACTIVITY_CODE=200;
-    private final int RESULT_CROP = 400;
-    String picturePath = "";
+
+    ProfileUpdateDialog profileUpdateDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -202,8 +202,9 @@ public class StartPageMultiplayer extends FragmentActivity {
 
         if (id == R.id.user_pic)
         {
-            Intent gallery_Intent = new Intent(getApplicationContext(), GalleryUtil.class);
-            startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
+            profileUpdateDialog = new ProfileUpdateDialog();
+            FragmentManager manager = getSupportFragmentManager();
+            profileUpdateDialog.show(manager, "");
         }
         return super.onOptionsItemSelected(item);
     }
@@ -211,7 +212,7 @@ public class StartPageMultiplayer extends FragmentActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        SharedMethods.updatePhoto(this, picturePath, requestCode, resultCode, GALLERY_ACTIVITY_CODE, RESULT_CROP, data);
+        profileUpdateDialog.onActivityResult(requestCode, resultCode, data);
     }
 
 

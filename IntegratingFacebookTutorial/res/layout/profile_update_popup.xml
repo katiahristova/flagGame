@@ -4,21 +4,7 @@
         android:background="@color/background_color"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/dimen5dp"
-            android:background="#FF0000FF" />
 
-        <TextView android:id="@+id/titleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Update Your Account"
-            android:layout_marginTop="@dimen/dimen10dp"
-            android:layout_marginBottom="@dimen/dimen10dp"
-            android:textColor="@color/wallet_holo_blue_light"
-            android:textSize="@dimen/title_size"
-            android:gravity="center">
-        </TextView>
         <View
             android:layout_width="fill_parent"
             android:layout_height="@dimen/dimen5dp"
@@ -60,4 +46,21 @@
             android:layout_marginBottom="@dimen/dimen20dp"
             android:maxLines="1"
             android:singleLine="true" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/button_cancel"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:layout_marginLeft="@dimen/dimen5dp"
+                android:layout_marginRight="@dimen/dimen10dp"/>
+            <Button
+                android:id="@+id/button_OK"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="@string/ok" />
+        </LinearLayout>
     </LinearLayout>

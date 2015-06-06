@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -37,11 +39,13 @@ public class ParseSignUpActivity extends Activity {
     private EditText passwordView;
     private EditText passwordAgainView;
     private ImageButton setPictureButton;
+    private RadioButton maleButton;
 
     private final int GALLERY_ACTIVITY_CODE = 200;
     private final int RESULT_CROP = 400;
     String picturePath = "";
     Bitmap selectedBitmap = null;
+    String gender = "male";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,8 @@ public class ParseSignUpActivity extends Activity {
         passwordView = (EditText) findViewById(R.id.password);
         passwordAgainView = (EditText) findViewById(R.id.passwordAgain);
         setPictureButton = (ImageButton) findViewById(R.id.set_picture_button);
+        maleButton = (RadioButton) findViewById(R.id.radioMale);
+
 
         setPictureButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -104,6 +110,9 @@ public class ParseSignUpActivity extends Activity {
                     return;
                 }
 
+                if (!maleButton.isChecked())
+                    gender = "female";
+
                 // Set up a progress dialog
                 final ProgressDialog dlg = new ProgressDialog(ParseSignUpActivity.this);
                 dlg.setTitle(getString(R.string.please_wait));
@@ -132,6 +141,7 @@ public class ParseSignUpActivity extends Activity {
                 user.setPassword(passwordView.getText().toString());
                 user.put("points", 0);
                 user.put("userimage", pFile);
+                user.put("gender", gender);
                 // Call the Parse signup method
                 user.signUpInBackground(new SignUpCallback() {
 

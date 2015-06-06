@@ -50,14 +50,12 @@ public class StartPageSinglePlayer extends FragmentActivity {
     Button selectRegionsButton;
     Button optionsButton;
 
+    ProfileUpdateDialog profileUpdateDialog;
+
     int guessRows = 0;
     boolean dataOn;
     boolean wifiOn;
     boolean networkAllowed;
-
-    private final int GALLERY_ACTIVITY_CODE=200;
-    private final int RESULT_CROP = 400;
-    String picturePath = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -251,25 +249,19 @@ public class StartPageSinglePlayer extends FragmentActivity {
 
         if (id == R.id.user_pic)
         {
-            /*ProfileUpdateDialog profileUpdateDialog = new ProfileUpdateDialog();
-            profileUpdateDialog.setTargetFragment(profileUpdateDialog, GALLERY_ACTIVITY_CODE);
-            profileUpdateDialog.setTargetFragment(profileUpdateDialog, RESULT_CROP);
+            profileUpdateDialog = new ProfileUpdateDialog();
             FragmentManager manager = getSupportFragmentManager();
             profileUpdateDialog.show(manager, "");
-            */
-
-            Intent gallery_Intent = new Intent(getApplicationContext(), GalleryUtil.class);
-            startActivityForResult(gallery_Intent, GALLERY_ACTIVITY_CODE);
 
         }
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        SharedMethods.updatePhoto(this, picturePath, requestCode, resultCode, GALLERY_ACTIVITY_CODE, RESULT_CROP, data);
-
+        profileUpdateDialog.onActivityResult(requestCode, resultCode, data);
     }
 
 
