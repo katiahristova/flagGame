@@ -58,7 +58,7 @@ public class UserDetailQueryAdapter {
                         ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
                         mainQuery.include("Sender");
                         mainQuery.include("Receiver");
-                        mainQuery.orderByDescending("createdAt");
+                        mainQuery.orderByDescending("updatedAt");
                         //mainQuery.setLimit(1);
                         return mainQuery;
 
