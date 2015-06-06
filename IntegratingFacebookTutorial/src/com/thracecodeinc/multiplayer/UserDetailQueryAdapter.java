@@ -59,7 +59,6 @@ public class UserDetailQueryAdapter {
                         mainQuery.include("Sender");
                         mainQuery.include("Receiver");
                         mainQuery.orderByDescending("updatedAt");
-                        //mainQuery.setLimit(1);
                         return mainQuery;
 
                     }
