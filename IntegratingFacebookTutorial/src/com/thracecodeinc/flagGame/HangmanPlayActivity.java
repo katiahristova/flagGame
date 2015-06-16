@@ -37,6 +37,7 @@ public class HangmanPlayActivity extends Activity {
 	private ImageView flagImageView;
 
 	private int curMan = 0;
+
 	private ArrayList<Boolean> curAnswer;
 	private String key;
 	private int moves = 0;
@@ -158,9 +159,9 @@ public class HangmanPlayActivity extends Activity {
 		}
        
         //not complete
-        if(curMan < 8){
+        //if(curMan < 8){
         	textFill.setText(getCurAnser());
-        }
+        //}
 	}
 	
 	@SuppressLint("NewApi")
